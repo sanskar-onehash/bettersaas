@@ -3,6 +3,24 @@ from bettersaas.bettersaas.doctype.saas_sites.saas_sites import delete_from_s3
 from frappe.utils.password import decrypt
 from frappe import _
 
+def bettersaas_patch():
+    onehash_workspaces = frappe.get_all(
+		"Workspace",
+		filters={"name": ("in", ["OneHash Integrations", "OneHash Settings"])},
+		fields=["name", "title", "icon", "indicator_color", "parent_page as parent", "public"],
+	)
+
+    erpnext_workspaces = frappe.get_all(
+		"Workspace",
+		filters={"name": ("in", ["ERPNext Integrations", "ERPNext Settings"])},
+		fields=["name", "title", "icon", "indicator_color", "parent_page as parent", "public"],
+	)
+
+    if onehash_workspaces and erpnext_workspaces:
+        for workspace in erpnext_workspaces:
+            frappe.delete_doc("Workspace", workspace["name"], force=True)
+            frappe.db.commit()
+    
 def delete_site_backups_from_s3(site_name):
     records = frappe.get_list(
         "SaaS Sites Backup",

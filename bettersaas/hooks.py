@@ -45,6 +45,8 @@ app_license = "MIT"
 # 	"Role": "home_page"
 # }
 
+after_migrate = ['bettersaas.api.bettersaas_patch']
+
 # Generators
 # ----------
 
