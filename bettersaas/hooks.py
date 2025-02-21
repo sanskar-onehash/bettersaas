@@ -96,8 +96,10 @@ after_migrate = ['bettersaas.api.bettersaas_patch']
 # ---------------
 # Override standard doctype classes
 
-# override_doctype_class = {
-# }
+override_doctype_class = {
+    "System Settings": "bettersaas.bettersaas.overrides.system_settings.SystemSettingsOverride",
+    "Email Queue": "bettersaas.bettersaas.overrides.email_queue.EmailQueueOverride"
+}
 
 # Document Events
 # ---------------
@@ -153,6 +155,7 @@ scheduler_events = {
 #
 override_whitelisted_methods = {
     "frappe.desk.page.backups.backups.schedule_files_backup": "bettersaas.bettersaas.overrides.globals.schedule_files_backup",
+    "frappe.core.doctype.communication.email.mark_email_as_seen": "bettersaas.bettersaas.overrides.email.mark_email_as_seen"
 }
 #
 # each overriding function accepts a `data` argument;
