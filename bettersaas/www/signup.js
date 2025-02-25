@@ -1,3 +1,62 @@
+//latest added code
+const createFrappeFallback = () => {
+  // If frappe is already defined, don't override it
+  if (typeof window.frappe !== 'undefined') {
+    return window.frappe;
+  }
+
+  console.warn("Creating frappe fallback as the original library is not loaded");
+  
+  // Create a basic implementation of the frappe object with essential methods
+  return {
+    call: function(options) {
+      const endpoint = options.method;
+      const args = options.args || {};
+      
+      console.log("Using frappe fallback to call:", endpoint);
+      
+      // Use jQuery AJAX since it's already included in your page
+      $.ajax({
+        url: '/api/method/' + endpoint,
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify(args),
+        success: function(data) {
+          if (options.callback) {
+            options.callback(data);
+          }
+          if (data.message && options.success) {
+            options.success(data.message);
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error("API call failed:", error);
+          if (options.error) {
+            options.error(error);
+          }
+        }
+      });
+    },
+    _: function(text) {
+      // Simple translation function fallback - just returns the text
+      return text;
+    },
+    ui: {
+      msgprint: function(message) {
+        alert(message); // Simple fallback for frappe's message display
+      }
+    },
+    datetime: {
+      now_date: function() {
+        return new Date().toISOString().split('T')[0];
+      }
+    }
+  };
+};
+
+window.frappe = window.frappe || createFrappeFallback();
+
 function getDomain() {
   let domain = "." + window.location.hostname.split(".").splice(1, 2).join(".");
   if (window.location.port) {
@@ -5,11 +64,90 @@ function getDomain() {
   }
   return domain;
 }
-window.onload = function () {
-  document.getElementById("main").style.visibility = "visible";
-  document.getElementById("spinner-bg").style.height = "0vh";
-  document.querySelector(".spinner-border").style.visibility = "hidden";
-};
+// window.onload = function () {
+//   document.getElementById("main").style.visibility = "visible";
+//   document.getElementById("spinner-bg").style.height = "0vh";
+//   document.querySelector(".spinner-border").style.visibility = "hidden";
+// };
+
+//latest code
+
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.querySelector('form');
+  const inputs = form.querySelectorAll('input');
+  
+  form.addEventListener('submit', function(event) {
+      let isFormValid = true;
+      
+      inputs.forEach(input => {
+          // Ignore OTP field
+          if (input.name !== 'otp' && input.id !== 'otp') {
+              if (input.value.trim() === '') {
+                  isFormValid = false;
+                  input.style.borderColor = 'red'; // Mark only empty fields red
+              } else {
+                  input.style.borderColor = ''; // Reset border for filled fields
+              }
+          }
+      });
+
+      if (!isFormValid) {
+          event.preventDefault(); // Prevent submission if any field is empty
+      }
+  });
+
+  inputs.forEach(input => {
+      input.addEventListener('input', function() {
+          if (this.value.trim() !== '') {
+              this.style.borderColor = ''; // Remove red border when user types
+          }
+      });
+  });
+});
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  const mainElement = document.getElementById("main");
+  const spinnerBgElement = document.getElementById("spinner-bg");
+  const spinnerBorderElement = document.querySelector(".spinner-border");
+
+  if (mainElement) {
+    mainElement.style.visibility = "visible";
+  }
+  if (spinnerBgElement) {
+    spinnerBgElement.style.height = "0vh";
+  }
+  if (spinnerBorderElement) {
+    spinnerBorderElement.style.visibility = "hidden";
+  }
+});
+
+document.addEventListener("DOMContentLoaded", async function () {
+  const countrySelect = document.getElementById("country");
+
+  if (countrySelect) {
+    try {
+      const response = await fetch("https://restcountries.com/v3.1/all");
+      const countries = await response.json();
+
+      const countryList = countries
+        .map((country) => country.name.common)
+        .sort();
+
+      countryList.forEach((country) => {
+        const option = document.createElement("option");
+        option.value = country;
+        option.textContent = country;
+        countrySelect.appendChild(option);
+      });
+
+    } catch (error) {
+      console.error("Error fetching country list:", error);
+    }
+  }
+});
+
+
 VeeValidate.configure({
   validateOnBlur: true, 
   validateOnChange: true,
@@ -175,7 +313,8 @@ window.Vue.createApp({
             config.HTTP_METHODS.CHECK_SUBDOMAIN.ENDPOINT,
           type: config.HTTP_METHODS.CHECK_SUBDOMAIN.METHOD,
           data: {
-            subdomain: sitename,
+            // subdomain: sitename,
+            subdomain: this.sitename, 
           },
         });
         if (
@@ -267,7 +406,7 @@ window.Vue.createApp({
         t_phone = this.phoneInput.getNumber();
       }
 
-      frappe.show_alert("Please check your email or phone for the OTP", 5);
+      // frappe.show_alert("Please check your email or phone for the OTP", 5);
       // send otp and set otpSent to true;
       let message;
       const resp = await $.ajax({
