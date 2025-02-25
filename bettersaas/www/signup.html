@@ -1,641 +1,669 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OneHash - Get Started</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-  <style>
-    html,
-    body {
-      overflow: hidden;
-      min-height: 100vh;
-      margin: 0;
-      padding: 0;
-      background-color: #f3f4f6 !important;
-    }
-
-    .form-container {
-      height: calc(100vh - 2rem);
-      overflow-y: auto;
-    }
-
-    .form-container::-webkit-scrollbar {
-      display: none;
-    }
-
-    .form-container {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    input[type="tel"] {
-      background-color: #f1f5f9;
-      border: 1px solid #d1d5db;
-    }
-
-    input[type="text"]:hover,
-    input[type="email"]:hover,
-    input[type="password"]:hover,
-    input[type="tel"]:hover {
-      background-color: #e2e8f0;
-    }
-
-    .bg-white {
-      background-color: #f9fafb;
-    }
-
-    .country-selector {
-      position: relative;
-      display: inline-block;
-    }
-
-    .flag-container {
-      cursor: pointer;
-      padding: 8px;
-      border: 1px solid #d1d5db;
-      border-radius: 4px 0 0 4px;
-      background-color: #f1f5f9;
-      display: flex;
-      align-items: center;
-      height: 42px;
-      min-width: 50px;
-      justify-content: center;
-    }
-
-    .country-dropdown {
-      position: absolute;
-      top: auto;
-      bottom: 100%;
-      left: 0;
-      z-index: 1000;
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      max-height: 300px;
-      overflow-y: auto;
-      display: none;
-      width: 280px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .country-dropdown.dropdown-bottom {
-      top: 100%;
-      bottom: auto;
-    }
-
-    .country-item {
-      padding: 8px 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .country-item:hover {
-      background-color: #f8f9fa;
-    }
-
-    .country-name {
-      flex: 1;
-      font-size: 14px;
-    }
-
-    .country-code {
-      color: #666;
-      font-size: 14px;
-    }
-
-    .phone-input-container {
-      position: relative;
-      flex: 1;
-    }
-
-    .phone-input {
-      width: 100%;
-      padding: 8px 8px 8px 50px;
-      border: 1px solid #d1d5db;
-      border-left: none;
-      border-radius: 0 4px 4px 0;
-      font-size: 14px;
-      height: 46px;
-    }
-
-    .phone-input:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 1px #3b82f6;
-    }
-
-    .dial-code-display {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #666;
-      font-size: 14px;
-      pointer-events: none;
-    }
-
-    .country-search {
-      position: sticky;
-      top: 0;
-      padding: 8px;
-      background: white;
-      border-bottom: 1px solid #ddd;
-    }
-
-    .country-search input {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-  </style>
-</head>
-
-<body class="bg-gray-180">
-  <div
-    class="min-h-screen bg-gray-190 flex flex-col lg:flex-row justify-center items-start lg:gap-16 px-4 lg:px-8 max-w-7xl mx-auto">
-    <!-- Left Section - Hidden on mobile -->
-    <div class="hidden lg:block lg:w-5/12 py-6 lg:py-12">
-      <div>
-        <img src="https://cdn.prod.website-files.com/5e53d34464688e6f5960a338/610a36c2792530d601aaf35f_OneHash_Logo.svg"
-          alt="OneHash" class="h-10 lg:h-12 mb-4 lg:mb-8 mt-4">
-
-
-
-        <h1 class="text-3xl lg:text-4xl font-bold mb-8 lg:mb-16 text-gray-900">An intelligent all in one CRM to boost
-          your sales</h1>
-
-        <div class="space-y-6 lg:space-y-10">
-          <div class="flex items-start space-x-4">
-            <div
-              class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-medium shrink-0">
-              1</div>
-            <div>
-              <h3 class="text-lg lg:text-xl font-semibold mb-2 text-gray-900">Comprehensive Lead Management</h3>
-              <p class="text-gray-500">Time is a crucial element in our lives, helping us to structure and organize our
-                daily activities into good habits.</p>
-            </div>
-          </div>
-
-          <div class="flex items-start space-x-4">
-            <div
-              class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-medium shrink-0">
-              2</div>
-            <div>
-              <h3 class="text-lg lg:text-xl font-semibold mb-2 text-gray-900">Drip Campaign and Notifications</h3>
-              <p class="text-gray-500">Time is a crucial element in our lives, helping us to structure and organize our
-                daily activities into good habits.</p>
-            </div>
-          </div>
-
-          <div class="flex items-start space-x-4">
-            <div
-              class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-medium shrink-0">
-              3</div>
-            <div>
-              <h3 class="text-lg lg:text-xl font-semibold mb-2 text-gray-900">Easily Configurable Automation with 100+
-              </h3>
-              <p class="text-gray-500">Time is a crucial element in our lives, helping us to structure and organize our
-                daily activities into good habits.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-8 lg:mt-12">
-          <h2 class="text-xl lg:text-2xl font-bold mb-6 lg:mb-8 text-center text-gray-900">Highly rated across category
-          </h2>
-          <div class="flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-8">
-            <img src="/assets/bettersaas/images/SAFR24.png" alt="Front Runners" class="lg:h-24"
-              style="height: 100px; width: 100px;">
-            <img src="/assets/bettersaas/images/GetApp-Lead24.png" alt="High Performer" class="lg:h-24"
-              style="height: 100px; width: 120px;">
-            <img src="/assets/bettersaas/images/CTS24.svg" alt="Capterra" class="lg:h-24"
-              style="height: 120px; width: 120px;">
-
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Mobile Logo and Get Started Section -->
-    <div class="lg:hidden w-full flex flex-col items-center py-4 space-y-4">
-      <img src="https://cdn.prod.website-files.com/5e53d34464688e6f5960a338/610a36c2792530d601aaf35f_OneHash_Logo.svg"
-        alt="OneHash" class="h-8">
-      <div class="text-center">
-        <h2 class="text-xl font-bold mb-5 text-gray-900">Get started with 30 days FREE trial</h2>
-        <p class="text-gray-500 text-sm">No credit card required</p>
-      </div>
-    </div>
-
-    <!-- Replace the existing form section with this updated version -->
-    <div class="w-full lg:w-5/12 pt-0 lg:py-12">
-      <div class="bg-white p-8 lg:p-6 rounded-xl shadow-sm">
-        <!-- Hide the heading on mobile, show on desktop -->
-        <div class="hidden lg:block">
-          <h2 class="text-2xl font-bold mb-2 text-gray-900">Get started with 30 days FREE trial</h2>
-          <p class="text-gray-500 mb-8 text-sm">No credit card required</p>
-        </div>
-
-        <form class="signup-form space-y-2 lg:space-y-6">
-          <div class="grid grid-cols-2 gap-2 lg:gap-4">
-            <div>
-              <label class="block text-sm font-medium mb-1 text-gray-700">First Name</label>
-              <input type="text" id="first_name" name="first_name"
-                class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1 text-gray-700">Last Name</label>
-              <input type="text" id="last_name" name="last_name"
-                class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium mb-1 text-gray-700">Company Name</label>
-            <input type="text" id="company_name" name="company_name"
-              class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium mb-1 text-gray-700">Master of Accounts</label>
-            <input type="text" id="location" name="location"
-              class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            <p class="text-xs text-gray-500 mt-0.5">Based on your business location your account will be created</p>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium mb-1 text-gray-700">Site Name</label>
-            <div class="flex items-center">
-              <input type="text" id="site_name" name="site_name"
-                class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              <span class="ml-2 text-gray-500 whitespace-nowrap text-sm">.onehash.site</span>
-            </div>
-          </div>
-
-          <!-- Email and Password Section -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-4">
-            <div class="col-span-1">
-              <label class="block text-sm font-medium mb-1 text-gray-700">Email</label>
-              <input type="email" id="email" name="email"
-                class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            </div>
-            <div class="col-span-1">
-              <label class="block text-sm font-medium mb-1 text-gray-700">Password</label>
-              <div class="relative">
-                <input type="password" id="password" name="password"
-                  class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <button type="button" class="toggle-password absolute right-3 top-1/2 transform -translate-y-1/2">
-                  <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Phone and OTP Section -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-4">
-            <div class="col-span-1">
-              <label class="block text-sm font-medium mb-1 text-gray-700">Phone Number</label>
-              <div class="flex">
-                <div class="country-selector">
-                  <div class="flag-container">
-                    <span class="flag">🇮🇳</span>
-                  </div>
-                  <div class="country-dropdown">
-                    <div class="country-search">
-                      <input type="text" placeholder="Search countries..." id="country-search">
-                    </div>
-                    <div class="country-list"></div>
-                  </div>
-                </div>
-                <div class="phone-input-container">
-                  <span class="dial-code-display">+91</span>
-                  <input type="tel" id="phone" name="phone" class="phone-input">
-                </div>
-              </div>
-            </div>
-            <div class="col-span-1">
-              <label class="block text-sm font-medium mb-1 text-gray-700">OTP</label>
-              <input type="text" id="otp" name="otp"
-                class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            </div>
-          </div>
-
-          <button type="button" id="send-otp"
-            class="w-full bg-gray-900 text-white py-2 lg:py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors text-sm lg:text-base mt-2 lg:mt-4">
-            Send OTP
-          </button>
-
-          <div class="text-center space-y-2 lg:space-y-4">
-            <p class="text-sm text-gray-600">
-              Already have an account? <a href="/login" class="text-blue-600 hover:text-blue-700">Sign in</a>
-            </p>
-
-            <p class="text-xs text-gray-500">
-              By proceeding, you agree to our <a href="/terms" class="text-blue-600 hover:text-blue-700">Terms</a> and
-              <a href="/privacy" class="text-blue-600 hover:text-blue-700">Privacy Policy</a>.
-            </p>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const countries = [
-      { code: 'IN', name: 'India', dialCode: '91', flag: '🇮🇳' },
-      { code: 'AF', name: 'Afghanistan', dialCode: '93', flag: '🇦🇫' },
-      { code: 'AL', name: 'Albania', dialCode: '355', flag: '🇦🇱' },
-      { code: 'DZ', name: 'Algeria', dialCode: '213', flag: '🇩🇿' },
-      { code: 'AD', name: 'Andorra', dialCode: '376', flag: '🇦🇩' },
-      { code: 'AO', name: 'Angola', dialCode: '244', flag: '🇦🇴' },
-      { code: 'AG', name: 'Antigua and Barbuda', dialCode: '1268', flag: '🇦🇬' },
-      { code: 'AR', name: 'Argentina', dialCode: '54', flag: '🇦🇷' },
-      { code: 'AM', name: 'Armenia', dialCode: '374', flag: '🇦🇲' },
-      { code: 'AU', name: 'Australia', dialCode: '61', flag: '🇦🇺' },
-      { code: 'AT', name: 'Austria', dialCode: '43', flag: '🇦🇹' },
-      { code: 'AZ', name: 'Azerbaijan', dialCode: '994', flag: '🇦🇿' },
-      { code: 'BS', name: 'Bahamas', dialCode: '1242', flag: '🇧🇸' },
-      { code: 'BH', name: 'Bahrain', dialCode: '973', flag: '🇧🇭' },
-      { code: 'BD', name: 'Bangladesh', dialCode: '880', flag: '🇧🇩' },
-      { code: 'BB', name: 'Barbados', dialCode: '1246', flag: '🇧🇧' },
-      { code: 'BY', name: 'Belarus', dialCode: '375', flag: '🇧🇾' },
-      { code: 'BE', name: 'Belgium', dialCode: '32', flag: '🇧🇪' },
-      { code: 'BZ', name: 'Belize', dialCode: '501', flag: '🇧🇿' },
-      { code: 'BJ', name: 'Benin', dialCode: '229', flag: '🇧🇯' },
-      { code: 'BT', name: 'Bhutan', dialCode: '975', flag: '🇧🇹' },
-      { code: 'BO', name: 'Bolivia', dialCode: '591', flag: '🇧🇴' },
-      { code: 'BA', name: 'Bosnia and Herzegovina', dialCode: '387', flag: '🇧🇦' },
-      { code: 'BW', name: 'Botswana', dialCode: '267', flag: '🇧🇼' },
-      { code: 'BR', name: 'Brazil', dialCode: '55', flag: '🇧🇷' },
-      { code: 'BN', name: 'Brunei', dialCode: '673', flag: '🇧🇳' },
-      { code: 'BG', name: 'Bulgaria', dialCode: '359', flag: '🇧🇬' },
-      { code: 'BF', name: 'Burkina Faso', dialCode: '226', flag: '🇧🇫' },
-      { code: 'BI', name: 'Burundi', dialCode: '257', flag: '🇧🇮' },
-      { code: 'KH', name: 'Cambodia', dialCode: '855', flag: '🇰🇭' },
-      { code: 'CM', name: 'Cameroon', dialCode: '237', flag: '🇨🇲' },
-      { code: 'CA', name: 'Canada', dialCode: '1', flag: '🇨🇦' },
-      { code: 'CV', name: 'Cape Verde', dialCode: '238', flag: '🇨🇻' },
-      { code: 'CF', name: 'Central African Republic', dialCode: '236', flag: '🇨🇫' },
-      { code: 'TD', name: 'Chad', dialCode: '235', flag: '🇹🇩' },
-      { code: 'CL', name: 'Chile', dialCode: '56', flag: '🇨🇱' },
-      { code: 'CN', name: 'China', dialCode: '86', flag: '🇨🇳' },
-      { code: 'CO', name: 'Colombia', dialCode: '57', flag: '🇨🇴' },
-      { code: 'KM', name: 'Comoros', dialCode: '269', flag: '🇰🇲' },
-      { code: 'CG', name: 'Congo', dialCode: '242', flag: '🇨🇬' },
-      { code: 'CR', name: 'Costa Rica', dialCode: '506', flag: '🇨🇷' },
-      { code: 'HR', name: 'Croatia', dialCode: '385', flag: '🇭🇷' },
-      { code: 'CU', name: 'Cuba', dialCode: '53', flag: '🇨🇺' },
-      { code: 'CY', name: 'Cyprus', dialCode: '357', flag: '🇨🇾' },
-      { code: 'CZ', name: 'Czech Republic', dialCode: '420', flag: '🇨🇿' },
-      { code: 'DK', name: 'Denmark', dialCode: '45', flag: '🇩🇰' },
-      { code: 'DJ', name: 'Djibouti', dialCode: '253', flag: '🇩🇯' },
-      { code: 'DM', name: 'Dominica', dialCode: '1767', flag: '🇩🇲' },
-      { code: 'DO', name: 'Dominican Republic', dialCode: '1849', flag: '🇩🇴' },
-      { code: 'EC', name: 'Ecuador', dialCode: '593', flag: '🇪🇨' },
-      { code: 'EG', name: 'Egypt', dialCode: '20', flag: '🇪🇬' },
-      { code: 'SV', name: 'El Salvador', dialCode: '503', flag: '🇸🇻' },
-      { code: 'GQ', name: 'Equatorial Guinea', dialCode: '240', flag: '🇬🇶' },
-      { code: 'ER', name: 'Eritrea', dialCode: '291', flag: '🇪🇷' },
-      { code: 'EE', name: 'Estonia', dialCode: '372', flag: '🇪🇪' },
-      { code: 'ET', name: 'Ethiopia', dialCode: '251', flag: '🇪🇹' },
-      { code: 'FJ', name: 'Fiji', dialCode: '679', flag: '🇫🇯' },
-      { code: 'FI', name: 'Finland', dialCode: '358', flag: '🇫🇮' },
-      { code: 'FR', name: 'France', dialCode: '33', flag: '🇫🇷' },
-      { code: 'GA', name: 'Gabon', dialCode: '241', flag: '🇬🇦' },
-      { code: 'GM', name: 'Gambia', dialCode: '220', flag: '🇬🇲' },
-      { code: 'GE', name: 'Georgia', dialCode: '995', flag: '🇬🇪' },
-      { code: 'DE', name: 'Germany', dialCode: '49', flag: '🇩🇪' },
-      { code: 'GH', name: 'Ghana', dialCode: '233', flag: '🇬🇭' },
-      { code: 'GR', name: 'Greece', dialCode: '30', flag: '🇬🇷' },
-      { code: 'GD', name: 'Grenada', dialCode: '1473', flag: '🇬🇩' },
-      { code: 'GT', name: 'Guatemala', dialCode: '502', flag: '🇬🇹' },
-      { code: 'GN', name: 'Guinea', dialCode: '224', flag: '🇬🇳' },
-      { code: 'GW', name: 'Guinea-Bissau', dialCode: '245', flag: '🇬🇼' },
-      { code: 'GY', name: 'Guyana', dialCode: '592', flag: '🇬🇾' },
-      { code: 'HT', name: 'Haiti', dialCode: '509', flag: '🇭🇹' },
-      { code: 'HN', name: 'Honduras', dialCode: '504', flag: '🇭🇳' },
-      { code: 'HK', name: 'Hong Kong', dialCode: '852', flag: '🇭🇰' },
-      { code: 'HU', name: 'Hungary', dialCode: '36', flag: '🇭🇺' },
-      { code: 'IS', name: 'Iceland', dialCode: '354', flag: '🇮🇸' },
-      { code: 'ID', name: 'Indonesia', dialCode: '62', flag: '🇮🇩' },
-      { code: 'IR', name: 'Iran', dialCode: '98', flag: '🇮🇷' },
-      { code: 'IQ', name: 'Iraq', dialCode: '964', flag: '🇮🇶' },
-      { code: 'IE', name: 'Ireland', dialCode: '353', flag: '🇮🇪' },
-      { code: 'IL', name: 'Israel', dialCode: '972', flag: '🇮🇱' },
-      { code: 'IT', name: 'Italy', dialCode: '39', flag: '🇮🇹' },
-      { code: 'JM', name: 'Jamaica', dialCode: '1876', flag: '🇯🇲' },
-      { code: 'JP', name: 'Japan', dialCode: '81', flag: '🇯🇵' },
-      { code: 'JO', name: 'Jordan', dialCode: '962', flag: '🇯🇴' },
-      { code: 'KZ', name: 'Kazakhstan', dialCode: '7', flag: '🇰🇿' },
-      { code: 'KE', name: 'Kenya', dialCode: '254', flag: '🇰🇪' },
-      { code: 'KI', name: 'Kiribati', dialCode: '686', flag: '🇰🇮' },
-      { code: 'KP', name: 'North Korea', dialCode: '850', flag: '🇰🇵' },
-      { code: 'KR', name: 'South Korea', dialCode: '82', flag: '🇰🇷' },
-      { code: 'KW', name: 'Kuwait', dialCode: '965', flag: '🇰🇼' },
-      { code: 'KG', name: 'Kyrgyzstan', dialCode: '996', flag: '🇰🇬' },
-      { code: 'LA', name: 'Laos', dialCode: '856', flag: '🇱🇦' },
-      { code: 'LV', name: 'Latvia', dialCode: '371', flag: '🇱🇻' },
-      { code: 'LB', name: 'Lebanon', dialCode: '961', flag: '🇱🇧' },
-      { code: 'LS', name: 'Lesotho', dialCode: '266', flag: '🇱🇸' },
-      { code: 'LR', name: 'Liberia', dialCode: '231', flag: '🇱🇷' },
-      { code: 'LY', name: 'Libya', dialCode: '218', flag: '🇱🇾' },
-      { code: 'LI', name: 'Liechtenstein', dialCode: '423', flag: '🇱🇮' },
-      { code: 'LT', name: 'Lithuania', dialCode: '370', flag: '🇱🇹' },
-      { code: 'LU', name: 'Luxembourg', dialCode: '352', flag: '🇱🇺' },
-      { code: 'MO', name: 'Macao', dialCode: '853', flag: '🇲🇴' },
-      { code: 'MG', name: 'Madagascar', dialCode: '261', flag: '🇲🇬' },
-      { code: 'MW', name: 'Malawi', dialCode: '265', flag: '🇲🇼' },
-      { code: 'MY', name: 'Malaysia', dialCode: '60', flag: '🇲🇾' },
-      { code: 'MV', name: 'Maldives', dialCode: '960', flag: '🇲🇻' },
-      { code: 'ML', name: 'Mali', dialCode: '223', flag: '🇲🇱' },
-      { code: 'MT', name: 'Malta', dialCode: '356', flag: '🇲🇹' },
-      { code: 'MH', name: 'Marshall Islands', dialCode: '692', flag: '🇲🇭' },
-      { code: 'MR', name: 'Mauritania', dialCode: '222', flag: '🇲🇷' },
-      { code: 'MU', name: 'Mauritius', dialCode: '230', flag: '🇲🇺' },
-      { code: 'MX', name: 'Mexico', dialCode: '52', flag: '🇲🇽' },
-      { code: 'FM', name: 'Micronesia', dialCode: '691', flag: '🇫🇲' },
-      { code: 'MD', name: 'Moldova', dialCode: '373', flag: '🇲🇩' },
-      { code: 'MC', name: 'Monaco', dialCode: '377', flag: '🇲🇨' },
-      { code: 'MN', name: 'Mongolia', dialCode: '976', flag: '🇲🇳' },
-      { code: 'ME', name: 'Montenegro', dialCode: '382', flag: '🇲🇪' },
-      { code: 'MA', name: 'Morocco', dialCode: '212', flag: '🇲🇦' },
-      { code: 'MZ', name: 'Mozambique', dialCode: '258', flag: '🇲🇿' },
-      { code: 'MM', name: 'Myanmar', dialCode: '95', flag: '🇲🇲' },
-      { code: 'NA', name: 'Namibia', dialCode: '264', flag: '🇳🇦' },
-      { code: 'NR', name: 'Nauru', dialCode: '674', flag: '🇳🇷' },
-      { code: 'NP', name: 'Nepal', dialCode: '977', flag: '🇳🇵' },
-      { code: 'NL', name: 'Netherlands', dialCode: '31', flag: '🇳🇱' },
-      { code: 'NZ', name: 'New Zealand', dialCode: '64', flag: '🇳🇿' },
-      { code: 'NI', name: 'Nicaragua', dialCode: '505', flag: '🇳🇮' },
-      { code: 'NE', name: 'Niger', dialCode: '227', flag: '🇳🇪' },
-      { code: 'NG', name: 'Nigeria', dialCode: '234', flag: '🇳🇬' },
-      { code: 'NO', name: 'Norway', dialCode: '47', flag: '🇳🇴' },
-      { code: 'OM', name: 'Oman', dialCode: '968', flag: '🇴🇲' },
-      { code: 'PK', name: 'Pakistan', dialCode: '92', flag: '🇵🇰' },
-      { code: 'PW', name: 'Palau', dialCode: '680', flag: '🇵🇼' },
-      { code: 'PS', name: 'Palestine', dialCode: '970', flag: '🇵🇸' },
-      { code: 'PA', name: 'Panama', dialCode: '507', flag: '🇵🇦' },
-      { code: 'PG', name: 'Papua New Guinea', dialCode: '675', flag: '🇵🇬' },
-      { code: 'PY', name: 'Paraguay', dialCode: '595', flag: '🇵🇾' },
-      { code: 'PE', name: 'Peru', dialCode: '51', flag: '🇵🇪' },
-      { code: 'PH', name: 'Philippines', dialCode: '63', flag: '🇵🇭' },
-      { code: 'PL', name: 'Poland', dialCode: '48', flag: '🇵🇱' },
-      { code: 'PT', name: 'Portugal', dialCode: '351', flag: '🇵🇹' },
-      { code: 'QA', name: 'Qatar', dialCode: '974', flag: '🇶🇦' },
-      { code: 'RO', name: 'Romania', dialCode: '40', flag: '🇷🇴' },
-      { code: 'RU', name: 'Russia', dialCode: '7', flag: '🇷🇺' },
-      { code: 'RW', name: 'Rwanda', dialCode: '250', flag: '🇷🇼' },
-      { code: 'KN', name: 'Saint Kitts and Nevis', dialCode: '1869', flag: '🇰🇳' },
-      { code: 'LC', name: 'Saint Lucia', dialCode: '1758', flag: '🇱🇨' },
-      { code: 'VC', name: 'Saint Vincent', dialCode: '1784', flag: '🇻🇨' },
-      { code: 'WS', name: 'Samoa', dialCode: '685', flag: '🇼🇸' },
-      { code: 'SM', name: 'San Marino', dialCode: '378', flag: '🇸🇲' },
-      { code: 'ST', name: 'Sao Tome and Principe', dialCode: '239', flag: '🇸🇹' },
-      { code: 'SA', name: 'Saudi Arabia', dialCode: '966', flag: '🇸🇦' },
-      { code: 'SN', name: 'Senegal', dialCode: '221', flag: '🇸🇳' },
-      { code: 'RS', name: 'Serbia', dialCode: '381', flag: '🇷🇸' },
-      { code: 'SC', name: 'Seychelles', dialCode: '248', flag: '🇸🇨' },
-      { code: 'SL', name: 'Sierra Leone', dialCode: '232', flag: '🇸🇱' },
-      { code: 'SG', name: 'Singapore', dialCode: '65', flag: '🇸🇬' },
-      { code: 'SK', name: 'Slovakia', dialCode: '421', flag: '🇸🇰' },
-      { code: 'SI', name: 'Slovenia', dialCode: '386', flag: '🇸🇮' },
-      { code: 'SB', name: 'Solomon Islands', dialCode: '677', flag: '🇸🇧' },
-      { code: 'SO', name: 'Somalia', dialCode: '252', flag: '🇸🇴' },
-      { code: 'ZA', name: 'South Africa', dialCode: '27', flag: '🇿🇦' },
-      { code: 'SS', name: 'South Sudan', dialCode: '211', flag: '🇸🇸' },
-      { code: 'ES', name: 'Spain', dialCode: '34', flag: '🇪🇸' },
-      { code: 'LK', name: 'Sri Lanka', dialCode: '94', flag: '🇱🇰' },
-      { code: 'SD', name: 'Sudan', dialCode: '249', flag: '🇸🇩' },
-      { code: 'SR', name: 'Suriname', dialCode: '597', flag: '🇸🇷' },
-      { code: 'SZ', name: 'Swaziland', dialCode: '268', flag: '🇸🇿' },
-      { code: 'SE', name: 'Sweden', dialCode: '46', flag: '🇸🇪' },
-      { code: 'CH', name: 'Switzerland', dialCode: '41', flag: '🇨🇭' },
-      { code: 'SY', name: 'Syria', dialCode: '963', flag: '🇸🇾' },
-      { code: 'TW', name: 'Taiwan', dialCode: '886', flag: '🇹🇼' },
-      { code: 'TJ', name: 'Tajikistan', dialCode: '992', flag: '🇹🇯' },
-      { code: 'TZ', name: 'Tanzania', dialCode: '255', flag: '🇹🇿' },
-      { code: 'TH', name: 'Thailand', dialCode: '66', flag: '🇹🇭' },
-      { code: 'TL', name: 'Timor-Leste', dialCode: '670', flag: '🇹🇱' },
-      { code: 'TG', name: 'Togo', dialCode: '228', flag: '🇹🇬' },
-      { code: 'TO', name: 'Tonga', dialCode: '676', flag: '🇹🇴' },
-      { code: 'TT', name: 'Trinidad and Tobago', dialCode: '1868', flag: '🇹🇹' },
-      { code: 'TN', name: 'Tunisia', dialCode: '216', flag: '🇹🇳' },
-      { code: 'TR', name: 'Turkey', dialCode: '90', flag: '🇹🇷' },
-      { code: 'TM', name: 'Turkmenistan', dialCode: '993', flag: '🇹🇲' },
-      { code: 'TV', name: 'Tuvalu', dialCode: '688', flag: '🇹🇻' },
-      { code: 'UG', name: 'Uganda', dialCode: '256', flag: '🇺🇬' },
-      { code: 'UA', name: 'Ukraine', dialCode: '380', flag: '🇺🇦' },
-      { code: 'AE', name: 'United Arab Emirates', dialCode: '971', flag: '🇦🇪' },
-      { code: 'GB', name: 'United Kingdom', dialCode: '44', flag: '🇬🇧' },
-      { code: 'US', name: 'United States', dialCode: '1', flag: '🇺🇸' },
-      { code: 'UY', name: 'Uruguay', dialCode: '598', flag: '🇺🇾' },
-      { code: 'UZ', name: 'Uzbekistan', dialCode: '998', flag: '🇺🇿' },
-      { code: 'VU', name: 'Vanuatu', dialCode: '678', flag: '🇻🇺' },
-      { code: 'VA', name: 'Vatican City', dialCode: '379', flag: '🇻🇦' },
-      { code: 'VE', name: 'Venezuela', dialCode: '58', flag: '🇻🇪' },
-      { code: 'VN', name: 'Vietnam', dialCode: '84', flag: '🇻🇳' },
-      { code: 'YE', name: 'Yemen', dialCode: '967', flag: '🇾🇪' },
-      { code: 'ZM', name: 'Zambia', dialCode: '260', flag: '🇿🇲' },
-      { code: 'ZW', name: 'Zimbabwe', dialCode: '263', flag: '🇿🇼' }
-    ];
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const flagContainer = document.querySelector('.flag-container');
-      const dropdown = document.querySelector('.country-dropdown');
-      const countryList = document.querySelector('.country-list');
-      const flagElement = document.querySelector('.flag');
-      const dialCodeDisplay = document.querySelector('.dial-code-display');
-      const searchInput = document.querySelector('#country-search');
-
-      function renderCountries(filteredCountries = countries) {
-        countryList.innerHTML = filteredCountries
-          .map(country => `
-            <div class="country-item" data-dial-code="${country.dialCode}" data-flag="${country.flag}">
-              <span class="country-flag">${country.flag}</span>
-              <span class="country-name">${country.name}</span>
-              <span class="country-code">+${country.dialCode}</span>
-            </div>
-          `)
-          .join('');
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OneHash - Get Started</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"
+    />
+    <style>
+      html,
+      body {
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        background-color: #eeeef1 !important;
       }
 
-      function toggleDropdown() {
-        const isVisible = dropdown.style.display === 'block';
+      select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1rem;
+        max-height: 150px;
+        overflow-y: auto;
+      }
 
-        if (!isVisible) {
-          dropdown.style.display = 'block';
-          const flagRect = flagContainer.getBoundingClientRect();
-          const dropdownRect = dropdown.getBoundingClientRect();
-          const viewportHeight = window.innerHeight;
-          const spaceAbove = flagRect.top;
-          const spaceBelow = viewportHeight - flagRect.bottom;
+      select:focus {
+        outline: none;
+      }
 
-          if (spaceBelow < 300 && spaceAbove > spaceBelow) {
-            dropdown.classList.remove('dropdown-bottom');
-            dropdown.style.maxHeight = `${Math.min(300, spaceAbove - 10)}px`;
+      .form-container {
+        height: calc(100vh - 2rem);
+        overflow-y: auto;
+      }
+
+      .form-container::-webkit-scrollbar {
+        display: none;
+      }
+
+      .form-container {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      input[type="password"],
+      input[type="tel"] {
+        background-color: #f1f5f9;
+        border: 1px solid #d1d5db;
+      }
+
+      input[type="text"]:hover,
+      input[type="email"]:hover,
+      input[type="password"]:hover,
+      input[type="tel"]:hover {
+        background-color: #e2e8f0;
+      }
+
+      .bg-white {
+        background-color: #f9fafb;
+      }
+
+      [v-cloak] {
+        display: none;
+      }
+
+      /* Fix for input field initial values */
+      input,
+      select {
+        opacity: 0;
+        animation: fadeIn 0.3s forwards;
+        animation-delay: 0.2s;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .progress-bar {
+        width: 33.33%; 
+        transition: width 0.5s ease; 
+      }
+
+      .progress-step-1 {
+        width: 23%; 
+      }
+
+      .progress-step-2 {
+        width: 46%; 
+      }
+
+      .progress-step-3 {
+        width: 70%; 
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-180">
+    <div id="main" v-cloak>
+      <div
+        class="min-h-screen bg-gray-190 flex flex-col lg:flex-row justify-center items-start lg:gap-16 px-4 lg:px-8 max-w-7xl mx-auto"
+      >
+        <!-- Left Section - Hidden on mobile -->
+        <div class="hidden lg:flex lg:w-5/12 py-12 items-center">
+          <div>
+            <img
+              src="https://cdn.prod.website-files.com/5e53d34464688e6f5960a338/610a36c2792530d601aaf35f_OneHash_Logo.svg"
+              alt="OneHash"
+              class="h-10 lg:h-12 mb-4 lg:mb-8 mt-4"
+            />
+
+            <h1
+              class="text-3xl lg:text-4xl font-bold mb-8 lg:mb-16 text-black-600"
+            >
+              An intelligent all in one CRM to boost your sales
+            </h1>
+
+            <div class="space-y-6 lg:space-y-10">
+              <div class="flex items-start space-x-4">
+                <div
+                  class="w-8 h-8 rounded-full bg-white border border-black flex items-center justify-center text-black font-medium shrink-0"
+                >
+                  1
+                </div>
+                <div>
+                  <h3
+                    class="text-lg lg:text-xl font-semibold mb-2 text-black-700"
+                  >
+                    Comprehensive Lead Management
+                  </h3>
+                  <p class="text-black-300">
+                    Time is a crucial element in our lives, helping us to
+                    structure and organize our daily activities into good
+                    habits.
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex items-start space-x-4">
+                <div
+                  class="w-8 h-8 rounded-full bg-white border border-black flex items-center justify-center text-black font-medium shrink-0"
+                >
+                  2
+                </div>
+                <div>
+                  <h3
+                    class="text-lg lg:text-xl font-semibold mb-2 text-black-700"
+                  >
+                    Drip Campaign and Notifications
+                  </h3>
+                  <p class="text-black-300">
+                    Time is a crucial element in our lives, helping us to
+                    structure and organize our daily activities into good
+                    habits.
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex items-start space-x-4">
+                <div
+                  class="w-8 h-8 rounded-full bg-white border border-black flex items-center justify-center text-black font-medium shrink-0"
+                >
+                  3
+                </div>
+                <div>
+                  <h3
+                    class="text-lg lg:text-xl font-semibold mb-2 text-black-700"
+                  >
+                    Easily Configurable Automation with 100+
+                  </h3>
+                  <p class="text-black-300">
+                    Time is a crucial element in our lives, helping us to
+                    structure and organize our daily activities into good
+                    habits.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-8 lg:mt-12">
+              <h2
+                class="text-xl lg:text-2xl font-bold mb-6 lg:mb-8 text-center text-black-700"
+              >
+                Highly rated across category
+              </h2>
+              <div
+                class="flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-8"
+              >
+                <img
+                  src="/assets/bettersaas/images/SAFR24.png"
+                  alt="Front Runners"
+                  class="lg:h-24"
+                  style="height: 100px; width: 100px"
+                />
+                <img
+                  src="/assets/bettersaas/images/GetApp-Lead24.png"
+                  alt="High Performer"
+                  class="lg:h-24"
+                  style="height: 100px; width: 120px"
+                />
+                <img
+                  src="/assets/bettersaas/images/CTS24.svg"
+                  alt="Capterra"
+                  class="lg:h-24"
+                  style="height: 120px; width: 120px"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Logo and Get Started Section -->
+        <div class="lg:hidden w-full flex flex-col items-center py-4 space-y-4">
+          <img
+            src="https://cdn.prod.website-files.com/5e53d34464688e6f5960a338/610a36c2792530d601aaf35f_OneHash_Logo.svg"
+            alt="OneHash"
+            class="h-8"
+          />
+          <div class="text-center">
+            <h2 class="text-xl font-bold mb-5 text-black-700">
+              Get started with 30 days FREE trial
+            </h2>
+            <p class="text-black-500 text-sm">No credit card required</p>
+          </div>
+        </div>
+
+        <!-- Replace the existing form section with this updated version -->
+        <div class="w-full lg:w-5/12 py-12">
+          <div class="bg-white p-8 lg:p-6 rounded-xl shadow-sm">
+            <!-- Hide the heading on mobile, show on desktop -->
+            <div class="hidden lg:block">
+              <h2 class="text-2xl font-bold mb-2 text-black-700">
+                Get started with 30 days FREE trial
+              </h2>
+              <p class="text-black-500 mb-8 text-sm">No credit card required</p>
+            </div>
+
+            <form class="signup-form space-y-2 lg:space-y-6">
+              <div class="grid grid-cols-2 gap-2 lg:gap-4">
+                <div>
+                  <label class="block text-sm font-medium mb-1 text-black-700"
+                    >First Name</label
+                  >
+                  <input
+                    type="text"
+                    id="first_name"
+                    name="first_name"
+                    v-model="fname"
+                    class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1 text-black-700"
+                    >Last Name</label
+                  >
+                  <input
+                    type="text"
+                    id="last_name"
+                    name="last_name"
+                    v-model="lname"
+                    class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium mb-1 text-black-700"
+                  >Company Name</label
+                >
+                <input
+                  type="text"
+                  id="company_name"
+                  name="company_name"
+                  v-model="company_name"
+                  class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium mb-1 text-black-700"
+                  >Master of Accounts</label
+                >
+                <select
+                  id="country"
+                  name="country"
+                  v-model="country"
+                  class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[#f1f5f9] hover:bg-[#e2e8f0] appearance-none cursor-pointer"
+                ></select>
+                <p class="text-xs text-black-500 mt-1">
+                  Based on your business location your account will be created
+                </p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1 text-black-700"
+                  >Site Name</label
+                >
+                <div class="flex items-center whitespace-nowrap">
+                  <v-field
+                    v-slot="{ meta, field, errorMessage }"
+                    :rules="checkSubdomain"
+                    :validateOnInput="true"
+                    name="site-name"
+                    v-model="sitename"
+                  >
+                    <input
+                      type="text"
+                      id="site_name"
+                      name="site_name"
+                      onpaste="return false;"
+                      autocomplete="off"
+                      pattern="^[a-zA-Z0-9 ]+$"
+                      placeholder="Site Name"
+                      v-bind="field"
+                      class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      @input="convertToLowercase"
+                      style="min-width: 0"
+                    />
+                    <span
+                      class="ml-2 text-black-500 font-bold text-sm flex-shrink-0"
+                    >
+                      .onehash.ai
+                    </span>
+                  </v-field>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-4">
+                <!-- Email Input -->
+                <div class="col-span-1">
+                  <label class="block text-sm font-medium mb-1 text-black-700"
+                    >Email</label
+                  >
+                  <!-- <input type="hidden" id="country" name="country" value="IN" /> -->
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    v-model="email"
+                    class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  <!-- <div class="feedback error-feedback" v-if="emailError">{{ emailError }}</div> -->
+                </div>
+                <!-- Password Input -->
+                <div class="col-span-1">
+                  <label class="block text-sm font-medium mb-1 text-black-700"
+                    >Password</label
+                  >
+                  <div class="relative">
+                    <input
+                      type="password"
+                      id="password"
+                      name="password"
+                      v-model="password"
+                      class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-14"
+                    />
+                    <button
+                      type="button"
+                      id="togglePassword"
+                      class="absolute inset-y-0 right-3 flex items-center justify-center w-10 h-full text-gray-500 focus:outline-none"
+                    >
+                      <svg
+                        class="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          id="showPasswordIcon"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        />
+                        <path
+                          id="hidePasswordIcon"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24M1 1l22 22"
+                          style="display: none"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Phone and OTP Section -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-4">
+                <!-- Phone Number Input -->
+                <div class="col-span-1">
+                  <label class="block text-sm font-medium mb-1 text-black-700">
+                    Phone Number
+                  </label>
+                  <!-- <div class="flex"> -->
+                  <div class="phone-input-container w-full">
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      v-model="phone"
+                      class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <!-- </div> -->
+                    <!-- <div class="feedback error-feedback" v-if="phoneError">{{ phoneError }}</div> -->
+                  </div>
+                </div>
+                <div class="col-span-1">
+                  <label class="block text-sm font-medium mb-1 text-black-700"
+                    >OTP</label
+                  >
+                  <input
+                    type="text"
+                    pattern="^[0-9]+$"
+                    name="otp"
+                    @input="verifyOTP"
+                    id="otp"
+                    placeholder="Enter OTP"
+                    v-model="otp"
+                    class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  <span id="otp-feedback" class="feedback"></span>
+                </div>
+              </div>
+
+              <button
+                :disabled="otpVerificationStatus.sendingOTP || otpVerificationStatus.otpSent || otpVerificationStatus.waitingForResend || otpVerificationStatus.otpVerified"
+                type="button"
+                @click="sendOtp"
+                class="w-full bg-gray-700 text-white py-2 lg:py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors text-sm lg:text-base mt-2 lg:mt-4 disabled:opacity-50"
+                style="
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                "
+              >
+                <span
+                  v-if="!otpVerificationStatus.otpSent && !otpVerificationStatus.otpVerified && !otpVerificationStatus.sendingOTP"
+                  >Send OTP</span
+                >
+                <span
+                  id="timer"
+                  v-if="!otpVerificationStatus.otpVerified"
+                ></span>
+                <span v-if="otpVerificationStatus.sendingOTP">Sending OTP</span>
+                <span v-if="otpVerificationStatus.otpVerified"
+                  >Processing ....
+                </span>
+              </button>
+
+              <div class="text-left space-y-2">
+                <p class="text-sm text-black-600">
+                  Already have an account?
+                  <a href="/login" class="text-blue-600 hover:text-blue-700"
+                    >Sign in</a
+                  >
+                </p>
+
+                <p class="text-left text-sm text-black-500">
+                  By proceeding, you agree to our
+                  <a
+                    href="https://onehash.ai/terms-of-use"
+                    class="text-blue-600 hover:text-blue-700"
+                    >Terms</a
+                  >
+                  and
+                  <a
+                    href="https://onehash.ai/privacy"
+                    class="text-blue-600 hover:text-blue-700"
+                    >Privacy Policy</a
+                  >.
+                </p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Site Creation UI - Shown after OTP verification -->
+      <div
+        class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white"
+        v-if="otpVerificationStatus.otpVerified"
+      >
+        <!-- OneHash Logo -->
+        <div class="mb-12 flex w-full justify-center">
+          <img
+            src="https://cdn.prod.website-files.com/5e53d34464688e6f5960a338/610a36c2792530d601aaf35f_OneHash_Logo.svg"
+            alt="OneHash"
+            class="h-12"
+          />
+        </div>
+
+        <!-- Loading Animation -->
+        <div class="mb-8">
+          <div class="flex items-center justify-center">
+            <div
+              class="h-12 w-12 animate-spin rounded-full border-b-2 border-gray-400"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Progress Steps -->
+        <div
+          class="relative mx-auto flex w-full max-w-lg items-center justify-center"
+        >
+          <!-- Background progress bar (behind steps) -->
+          <div class="absolute top-4 left-0 w-4/6 h-1 bg-gray-200" style="left: 15%;"></div>
+
+          <!-- Animated Progress -->
+          <div
+            class="absolute top-4 left-0 h-1 bg-black transition-all duration-500 progress-bar"
+            :class="{
+            'progress-step-1': status.step1 === 'active',
+            'progress-step-2': status.step2 === 'active',
+            'progress-step-3': status.step3 === 'active'
+          }" style="left: 15%"
+          ></div>
+          <!-- Dynamically calculated progress width -->
+
+          <!-- Step 1 -->
+          <div class="relative flex flex-1 flex-col items-center">
+            <div
+              class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full"
+              :class="{
+                'bg-black text-white': status.step1 === 'active' || status.step1 === 'completed',
+                'bg-white text-black border border-gray-300': status.step1 !== 'active' && status.step1 !== 'completed',
+                'border-red-500': status.step1 === 'failed'
+              }"
+            >
+              1
+            </div>
+            <div class="mt-2 text-center text-sm">Creating site</div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="relative flex flex-1 flex-col items-center">
+            <div
+              class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full"
+              :class="{
+                'bg-black text-white': status.step2 === 'active' || status.step2 === 'completed',
+                'bg-white text-black border border-gray-300': status.step2 !== 'active' && status.step2 !== 'completed',
+                'border-red-500': status.step2 === 'failed'
+              }"
+            >
+              2
+            </div>
+            <div class="mt-2 text-center text-sm">Creating user</div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="relative flex flex-1 flex-col items-center">
+            <div
+              class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full"
+              :class="{
+                'bg-black text-white': status.step3 === 'active' || status.step3 === 'completed',
+                'bg-white text-black border border-gray-300': status.step3 !== 'active' && status.step3 !== 'completed',
+                'border-red-500': status.step3 === 'failed'
+              }"
+            >
+              3
+            </div>
+            <div class="mt-2 text-center text-sm">Redirecting</div>
+          </div>
+        </div>
+
+        <!-- Message -->
+        <div class="w-full max-w-md px-4 mt-8 text-center">
+          <h2 class="mb-2 text-xl font-medium">Hey,</h2>
+          <p class="text-gray-700">
+            Sit back and relax while we are creating your site
+          </p>
+          <p class="mt-1 font-medium text-gray-700">
+            <b>{{_(sitename)}}.{{domain}}</b>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const phoneInputField = document.querySelector("#phone");
+
+        const phoneInput = window.intlTelInput(phoneInputField, {
+          utilsScript:
+            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+          initialCountry: "auto",
+          preferredCountries: ["in", "us", "gb"],
+          geoIpLookup: (callback) => {
+            fetch("https://ipinfo.io")
+              .then((resp) => resp.json())
+              .then((data) => {
+                const countryCode = data && data.country ? data.country : "us";
+                callback(countryCode);
+              })
+              .catch(() => callback("us"));
+          },
+        });
+
+        phoneInputField.addEventListener("countrychange", () => {});
+      });
+    </script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const passwordInput = document.getElementById("password");
+        const toggleButton = document.getElementById("togglePassword");
+        const showIcon = document.getElementById("showPasswordIcon");
+        const hideIcon = document.getElementById("hidePasswordIcon");
+
+        toggleButton.addEventListener("click", function () {
+          if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            showIcon.style.display = "none";
+            hideIcon.style.display = "block";
           } else {
-            dropdown.classList.add('dropdown-bottom');
-            dropdown.style.maxHeight = `${Math.min(300, spaceBelow - 10)}px`;
+            passwordInput.type = "password";
+            showIcon.style.display = "block";
+            hideIcon.style.display = "none";
           }
+        });
+      });
+    </script>
 
-          searchInput.value = '';
-          renderCountries();
-          searchInput.focus();
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        if (typeof frappe !== "undefined") {
+          console.log("Frappe is loaded");
         } else {
-          dropdown.style.display = 'none';
-        }
-      }
-
-      flagContainer.addEventListener('click', toggleDropdown);
-
-      document.addEventListener('click', (e) => {
-        if (!dropdown.contains(e.target) && !flagContainer.contains(e.target)) {
-          dropdown.style.display = 'none';
+          console.error("Frappe is not defined");
         }
       });
+    </script>
 
-      countryList.addEventListener('click', (e) => {
-        const countryItem = e.target.closest('.country-item');
-        if (countryItem) {
-          const dialCode = countryItem.dataset.dialCode;
-          const flag = countryItem.dataset.flag;
-          flagElement.textContent = flag;
-          dialCodeDisplay.textContent = `+${dialCode}`;
-          dropdown.style.display = 'none';
-        }
-      });
-
-      searchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        const filteredCountries = countries.filter(country =>
-          country.name.toLowerCase().includes(searchTerm) ||
-          country.dialCode.includes(searchTerm)
-        );
-        renderCountries(filteredCountries);
-      });
-
-      renderCountries();
-    });
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
-  <script src="https://www.google.com/recaptcha/api.js"></script>
-  <script src="https://unpkg.com/@vee-validate/rules"></script>
-  <script src="https://unpkg.com/vee-validate"></script>
-  <script src="./config.js"></script>
-  <script src="./signup.js"></script>
-</body>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+      integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"
+      integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/vee-validate@4.5.8/dist/vee-validate.js"></script>
+    <script src="./config.js"></script>
+    <script src="./signup.js"></script>
+  </body>
 </html>
