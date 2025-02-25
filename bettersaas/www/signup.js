@@ -5,15 +5,12 @@ const createFrappeFallback = () => {
     return window.frappe;
   }
 
-  console.warn("Creating frappe fallback as the original library is not loaded");
   
   // Create a basic implementation of the frappe object with essential methods
   return {
     call: function(options) {
       const endpoint = options.method;
       const args = options.args || {};
-      
-      console.log("Using frappe fallback to call:", endpoint);
       
       // Use jQuery AJAX since it's already included in your page
       $.ajax({
