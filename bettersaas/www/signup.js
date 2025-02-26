@@ -1,18 +1,14 @@
 //latest added code
 const createFrappeFallback = () => {
-  // If frappe is already defined, don't override it
   if (typeof window.frappe !== 'undefined') {
     return window.frappe;
   }
 
-  
-  // Create a basic implementation of the frappe object with essential methods
   return {
     call: function(options) {
       const endpoint = options.method;
       const args = options.args || {};
       
-      // Use jQuery AJAX since it's already included in your page
       $.ajax({
         url: '/api/method/' + endpoint,
         type: 'POST',
