@@ -132,7 +132,7 @@
   },
   {
    "fieldname": "default_license_limit_in",
-   "fieldtype": "Data",
+   "fieldtype": "Int",
    "label": "Default License Limit (IN)"
   },
   {
@@ -175,7 +175,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-01-31 13:17:46.250575",
+ "modified": "2025-02-25 13:02:04.393668",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Settings",

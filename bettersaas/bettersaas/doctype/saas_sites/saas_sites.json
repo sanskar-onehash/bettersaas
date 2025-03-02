@@ -187,7 +187,7 @@
    "fieldname": "license_limit",
    "fieldtype": "Read Only",
    "is_virtual": 1,
-   "label": "License Limit"
+   "label": "Minimum License Limit"
   },
   {
    "default": "0",
@@ -210,7 +210,7 @@
    "link_fieldname": "linked_to_site"
   }
  ],
- "modified": "2024-12-30 15:45:35.185964",
+ "modified": "2025-02-25 14:10:43.005611",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Sites",
