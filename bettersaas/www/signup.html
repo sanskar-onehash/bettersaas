@@ -702,23 +702,23 @@
                    });
                    
                    // Block opening of inspect element on Windows
-                  //  document.addEventListener("keydown", function (event) {
-                  //    // Check for F12 key or Ctrl+Shift+I (Inspect Element shortcut)
-                  //    if (
-                  //      event.key === "F12" ||
-                  //      (event.ctrlKey && event.shiftKey && event.key === "I")
-                  //    ) {
-                  //      event.preventDefault();
-                  //    }
-                  //  });
+                   document.addEventListener("keydown", function (event) {
+                     // Check for F12 key or Ctrl+Shift+I (Inspect Element shortcut)
+                     if (
+                       event.key === "F12" ||
+                       (event.ctrlKey && event.shiftKey && event.key === "I")
+                     ) {
+                       event.preventDefault();
+                     }
+                   });
                    
                    // Block opening of inspect element on Mac
-                  //  document.addEventListener("keydown", function (event) {
-                  //    // Check for Cmd+Option+I (Inspect Element shortcut)
-                  //    if (event.metaKey && event.altKey && event.key === "I") {
-                  //      event.preventDefault();
-                  //    }
-                  //  });
+                   document.addEventListener("keydown", function (event) {
+                     // Check for Cmd+Option+I (Inspect Element shortcut)
+                     if (event.metaKey && event.altKey && event.key === "I") {
+                       event.preventDefault();
+                     }
+                   });
 </script>
 <script>
   $( 'body' ).on( 'keypress', ':input[pattern]', function( ev ) {
@@ -733,7 +733,7 @@
       }
   } );
 </script>
-<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script
   src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
   integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
@@ -749,7 +749,9 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://www.google.com/recaptcha/api.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vee-validate@4.15.0/dist/vee-validate.iife.min.js"></script>
+<!-- <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js"></script> -->
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/vee-validate@4.5.8/dist/vee-validate.js"></script>
 <script src="./config.js"></script>
 <script src="./signup.js"></script>
 
