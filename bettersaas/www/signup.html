@@ -1,57 +1,91 @@
 {% extends "bettersaas/templates/web.html" %} {% block style %}
 
-<!-- no-header -->
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OneHash - Get Started</title>
+  <link rel="icon" type="image/png" href="/assets/whitelabel/images/whitelabel_logo.png" />
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"
+  />
   <style>
-    
-  body {font-family: Arial, Helvetica, sans-serif;}
-
-  .container2 {
-  margin-top: 20%;
-  width: 80%;
-  text-align: center;
-}
-
-.progress2 {
-  padding: 2px;
-  border-radius: 20px;
-  background: rgba(0, 0, 0, 0.25);  
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px rgba(255, 255, 255, 0.08);
-}
-
-.progress-bar2 {
-  height: 3px;
-  border-radius: 20px;
-  background-image: 
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.911), rgba(255, 255, 255, 0.05));
-  transition: 1.5s linear;  
-  transition-property: width, background-color;    
-}
-
-.progress-moved .progress-bar2 {
-  animation: progressAnimation 50s forwards;
-}
-
-@keyframes progressAnimation {
-  0% { width: 0%; background-color: rgba(110, 204, 91, 1); }
-  48% { width: 48%; background-color: rgba(110, 204, 91, 1); }
-  100% { width: 98%; background-color: rgba(110, 204, 91, 1); }
-}
-
-  
-    .loader-container {
-      text-align: center;
-      justify-content: center;
-      animation: fadeIn 2s ease-in-out, moveUp 4s infinite alternate;
+    .navbar,
+    .web-footer {
+      display: none;
     }
-    .loading-text {
-      margin-top: 0;
-      font-size: 15px;
-      color: #333;
+    html,
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      background-color: #eeeef1 !important;
     }
-    
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 1rem;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    select:focus {
+      outline: none;
+    }
+
+    .form-container {
+      height: calc(100vh - 2rem);
+      overflow-y: auto;
+    }
+
+    .form-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .form-container {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"] {
+      background-color: #f1f5f9;
+      border: 1px solid #d1d5db;
+    }
+
+    input[type="text"]:hover,
+    input[type="email"]:hover,
+    input[type="password"]:hover,
+    input[type="tel"]:hover {
+      background-color: #e2e8f0;
+    }
+
+    .bg-white {
+      background-color: #f9fafb;
+    }
+
+    [v-cloak] {
+      display: none;
+    }
+
+    /* Fix for input field initial values */
+    input,
+    select {
+      opacity: 0;
+      animation: fadeIn 0.3s forwards;
+      animation-delay: 0.2s;
+    }
+
     @keyframes fadeIn {
       from {
         opacity: 0;
@@ -60,530 +94,418 @@
         opacity: 1;
       }
     }
-    
-    @keyframes moveUp {
-      from {
-        transform: translateY(0);
-      }
-      to {
-        transform: translateY(-20px);
-      }
+
+    .progress-bar {
+      width: 33.33%; 
+      transition: width 0.5s ease; 
     }
-    
-    @keyframes blink {
-      0%, 100% {
-        opacity: 0;
-      }
-      50% {
-        opacity: 1;
-      }
+
+    .progress-step-1 {
+      width: 23%; 
     }
-    .fade-in-animation {
-      animation: fadeIn 2s ease-in-out, moveUp 4s infinite alternate;
+
+    .progress-step-2 {
+      width: 46%; 
+    }
+
+    .progress-step-3 {
+      width: 70%; 
+    }
+
+    .iti {
+      width: 100% !important;
+    }
+
+    .iti input {
+      width: 100% !important;
     }
   </style>
-
-
-  </head>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  href="https://fonts.googleapis.com/css2?family=Carter+One&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;1,100;1,200;1,300;1,400;1,500;1,600&family=Righteous&family=Titan+One&display=swap"
-  rel="stylesheet"
-/>
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"
-/>
-<link rel="stylesheet" href="./step.css" />
-<link rel="stylesheet" href="./signup.css" />
+</head>
 {% endblock %} {% block page_content %}
-<div>
-  <div class="spinner-bg" id="spinner-bg">
-    <div class="spinner-border" role="status">
-      <span class="sr-only">Loading...</span>
-    </div>
-  </div>
-
-  <main id="main" style="visibility: hidden">
-    <div class="left">
-      <div class="login_box">
-        <div class="logo">
+<body class="bg-grey-180">
+  <div id="main" v-cloak>
+    <div
+      class="min-h-screen bg-gray-190 flex flex-col lg:flex-row justify-center items-start lg:gap-16 px-4 lg:px-8"
+    >
+      <div class="hidden lg:!flex lg:w-5/12 py-12 items-center">
+        <div>
           <img
-            src="https://uploads-ssl.webflow.com/5e53d34464688e6f5960a338/610a36c2792530d601aaf35f_OneHash_Logo.svg"
-            class="logo-img"
-            aria-hidden="true"
+            src="/assets/whitelabel/images/whitelabel_logo_long.svg"
+            alt="OneHash"
+            class="h-10 lg:h-12 mb-4 lg:mb-8 mt-4 mr-2"
           />
-          <div class="tagline">
-            <div class="tagline_main">30 Days Trial on Us</div>
-            <div class="tagline_sub">No credit card required</div>
-          </div>
-        </div>
-        <v-form
-          @submit="handleSubmit"
-          id="form"
-          v-slot="{meta}"
-          autocomplete="off"
-          novalidate="novalidate"
-        >
-        <div
-          class="g-recaptcha"
-          :data-sitekey="recaptchaSiteKey"
-          data-callback="onRecaptchaVerified"
-          data-size="invisible"
-        ></div>
-          <div class="row">
-            <div class="col-12 col-md-6 mb-1">
-              <v-field
-                class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
-                name="first-name"
-                type="text"
-                placeholder="First Name"
-                :rules="isRequired"
-                v-model="fname"
-              ></v-field>
 
-              <error-message
-                name="first-name"
-                as="div"
-                class="feedback error-feedback"
-              ></error-message>
-            </div>
-            <div class="col-12 col-md-6 mb-1">
-              <v-field
-                class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
-                name="last-name"
-                type="text"
-                placeholder="Last Name"
-                :rules="isRequired"
-                v-model="lname"
-              ></v-field>
+          <h1
+            class="text-3xl lg:text-4xl font-bold mb-8 lg:mb-16 text-black-600"
+          >
+            An intelligent all in one CRM to boost your sales
+          </h1>
 
-              <error-message
-              name="last-name"
-              as="div"
-              class="feedback error-feedback"
-              ></error-message>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12 relative">
-              <v-field
-                class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
-                name="company-name"
-                type="text"
-                placeholder="Company Name"
-                :rules="isRequired"
-                v-model="company_name"
-              ></v-field>
-              <error-message
-                name="company-name"
-                as="div"
-                class="feedback error-feedback"
-              ></error-message>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12 mb-6 relative">
-              <span for="country" class="text-sm text-red-600 px-3">Select Chart Of Accounts</span>
-              <select class="form-select col-12 rounded-pill appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500" autocomplete="country" id="country" name="country">
-                <option value="AF">Afghanistan</option>
-                <option value="AX">Åland Islands</option>
-                <option value="AL">Albania</option>
-                <option value="DZ">Algeria</option>
-                <option value="AS">American Samoa</option>
-                <option value="AD">Andorra</option>
-                <option value="AO">Angola</option>
-                <option value="AI">Anguilla</option>
-                <option value="AQ">Antarctica</option>
-                <option value="AG">Antigua and Barbuda</option>
-                <option value="AR">Argentina</option>
-                <option value="AM">Armenia</option>
-                <option value="AW">Aruba</option>
-                <option value="AU">Australia</option>
-                <option value="AT">Austria</option>
-                <option value="AZ">Azerbaijan</option>
-                <option value="BS">Bahamas</option>
-                <option value="BH">Bahrain</option>
-                <option value="BD">Bangladesh</option>
-                <option value="BB">Barbados</option>
-                <option value="BY">Belarus</option>
-                <option value="BE">Belgium</option>
-                <option value="BZ">Belize</option>
-                <option value="BJ">Benin</option>
-                <option value="BM">Bermuda</option>
-                <option value="BT">Bhutan</option>
-                <option value="BO">Bolivia (Plurinational State of)</option>
-                <option value="BA">Bosnia and Herzegovina</option>
-                <option value="BW">Botswana</option>
-                <option value="BV">Bouvet Island</option>
-                <option value="BR">Brazil</option>
-                <option value="IO">British Indian Ocean Territory</option>
-                <option value="BN">Brunei Darussalam</option>
-                <option value="BG">Bulgaria</option>
-                <option value="BF">Burkina Faso</option>
-                <option value="BI">Burundi</option>
-                <option value="CV">Cabo Verde</option>
-                <option value="KH">Cambodia</option>
-                <option value="CM">Cameroon</option>
-                <option value="CA">Canada</option>
-                <option value="BQ">Caribbean Netherlands</option>
-                <option value="KY">Cayman Islands</option>
-                <option value="CF">Central African Republic</option>
-                <option value="TD">Chad</option>
-                <option value="CL">Chile</option>
-                <option value="CN">China</option>
-                <option value="CX">Christmas Island</option>
-                <option value="CC">Cocos (Keeling) Islands</option>
-                <option value="CO">Colombia</option>
-                <option value="KM">Comoros</option>
-                <option value="CG">Congo</option>
-                <option value="CD">Congo, Democratic Republic of the</option>
-                <option value="CK">Cook Islands</option>
-                <option value="CR">Costa Rica</option>
-                <option value="HR">Croatia</option>
-                <option value="CU">Cuba</option>
-                <option value="CW">Curaçao</option>
-                <option value="CY">Cyprus</option>
-                <option value="CZ">Czech Republic</option>
-                <option value="CI">Côte d'Ivoire</option>
-                <option value="DK">Denmark</option>
-                <option value="DJ">Djibouti</option>
-                <option value="DM">Dominica</option>
-                <option value="DO">Dominican Republic</option>
-                <option value="EC">Ecuador</option>
-                <option value="EG">Egypt</option>
-                <option value="SV">El Salvador</option>
-                <option value="GQ">Equatorial Guinea</option>
-                <option value="ER">Eritrea</option>
-                <option value="EE">Estonia</option>
-                <option value="SZ">Eswatini (Swaziland)</option>
-                <option value="ET">Ethiopia</option>
-                <option value="FK">Falkland Islands (Malvinas)</option>
-                <option value="FO">Faroe Islands</option>
-                <option value="FJ">Fiji</option>
-                <option value="FI">Finland</option>
-                <option value="FR">France</option>
-                <option value="GF">French Guiana</option>
-                <option value="PF">French Polynesia</option>
-                <option value="TF">French Southern Territories</option>
-                <option value="GA">Gabon</option>
-                <option value="GM">Gambia</option>
-                <option value="GE">Georgia</option>
-                <option value="DE">Germany</option>
-                <option value="GH">Ghana</option>
-                <option value="GI">Gibraltar</option>
-                <option value="GR">Greece</option>
-                <option value="GL">Greenland</option>
-                <option value="GD">Grenada</option>
-                <option value="GP">Guadeloupe</option>
-                <option value="GU">Guam</option>
-                <option value="GT">Guatemala</option>
-                <option value="GG">Guernsey</option>
-                <option value="GN">Guinea</option>
-                <option value="GW">Guinea-Bissau</option>
-                <option value="GY">Guyana</option>
-                <option value="HT">Haiti</option>
-                <option value="HM">Heard Island and Mcdonald Islands</option>
-                <option value="HN">Honduras</option>
-                <option value="HK">Hong Kong</option>
-                <option value="HU">Hungary</option>
-                <option value="IS">Iceland</option>
-                <option value="IN">India</option>
-                <option value="ID">Indonesia</option>
-                <option value="IR">Iran</option>
-                <option value="IQ">Iraq</option>
-                <option value="IE">Ireland</option>
-                <option value="IM">Isle of Man</option>
-                <option value="IL">Israel</option>
-                <option value="IT">Italy</option>
-                <option value="JM">Jamaica</option>
-                <option value="JP">Japan</option>
-                <option value="JE">Jersey</option>
-                <option value="JO">Jordan</option>
-                <option value="KZ">Kazakhstan</option>
-                <option value="KE">Kenya</option>
-                <option value="KI">Kiribati</option>
-                <option value="KP">Korea, North</option>
-                <option value="KR">Korea, South</option>
-                <option value="XK">Kosovo</option>
-                <option value="KW">Kuwait</option>
-                <option value="KG">Kyrgyzstan</option>
-                <option value="LA">Lao People's Democratic Republic</option>
-                <option value="LV">Latvia</option>
-                <option value="LB">Lebanon</option>
-                <option value="LS">Lesotho</option>
-                <option value="LR">Liberia</option>
-                <option value="LY">Libya</option>
-                <option value="LI">Liechtenstein</option>
-                <option value="LT">Lithuania</option>
-                <option value="LU">Luxembourg</option>
-                <option value="MO">Macao</option>
-                <option value="MK">Macedonia North</option>
-                <option value="MG">Madagascar</option>
-                <option value="MW">Malawi</option>
-                <option value="MY">Malaysia</option>
-                <option value="MV">Maldives</option>
-                <option value="ML">Mali</option>
-                <option value="MT">Malta</option>
-                <option value="MH">Marshall Islands</option>
-                <option value="MQ">Martinique</option>
-                <option value="MR">Mauritania</option>
-                <option value="MU">Mauritius</option>
-                <option value="YT">Mayotte</option>
-                <option value="MX">Mexico</option>
-                <option value="FM">Micronesia</option>
-                <option value="MD">Moldova</option>
-                <option value="MC">Monaco</option>
-                <option value="MN">Mongolia</option>
-                <option value="ME">Montenegro</option>
-                <option value="MS">Montserrat</option>
-                <option value="MA">Morocco</option>
-                <option value="MZ">Mozambique</option>
-                <option value="MM">Myanmar (Burma)</option>
-                <option value="NA">Namibia</option>
-                <option value="NR">Nauru</option>
-                <option value="NP">Nepal</option>
-                <option value="NL">Netherlands</option>
-                <option value="AN">Netherlands Antilles</option>
-                <option value="NC">New Caledonia</option>
-                <option value="NZ">New Zealand</option>
-                <option value="NI">Nicaragua</option>
-                <option value="NE">Niger</option>
-                <option value="NG">Nigeria</option>
-                <option value="NU">Niue</option>
-                <option value="NF">Norfolk Island</option>
-                <option value="MP">Northern Mariana Islands</option>
-                <option value="NO">Norway</option>
-                <option value="OM">Oman</option>
-                <option value="PK">Pakistan</option>
-                <option value="PW">Palau</option>
-                <option value="PS">Palestine</option>
-                <option value="PA">Panama</option>
-                <option value="PG">Papua New Guinea</option>
-                <option value="PY">Paraguay</option>
-                <option value="PE">Peru</option>
-                <option value="PH">Philippines</option>
-                <option value="PN">Pitcairn Islands</option>
-                <option value="PL">Poland</option>
-                <option value="PT">Portugal</option>
-                <option value="PR">Puerto Rico</option>
-                <option value="QA">Qatar</option>
-                <option value="RE">Reunion</option>
-                <option value="RO">Romania</option>
-                <option value="RU">Russian Federation</option>
-                <option value="RW">Rwanda</option>
-                <option value="BL">Saint Barthelemy</option>
-                <option value="SH">Saint Helena</option>
-                <option value="KN">Saint Kitts and Nevis</option>
-                <option value="LC">Saint Lucia</option>
-                <option value="MF">Saint Martin</option>
-                <option value="PM">Saint Pierre and Miquelon</option>
-                <option value="VC">Saint Vincent and the Grenadines</option>
-                <option value="WS">Samoa</option>
-                <option value="SM">San Marino</option>
-                <option value="ST">Sao Tome and Principe</option>
-                <option value="SA">Saudi Arabia</option>
-                <option value="SN">Senegal</option>
-                <option value="RS">Serbia</option>
-                <option value="CS">Serbia and Montenegro</option>
-                <option value="SC">Seychelles</option>
-                <option value="SL">Sierra Leone</option>
-                <option value="SG">Singapore</option>
-                <option value="SX">Sint Maarten</option>
-                <option value="SK">Slovakia</option>
-                <option value="SI">Slovenia</option>
-                <option value="SB">Solomon Islands</option>
-                <option value="SO">Somalia</option>
-                <option value="ZA">South Africa</option>
-                <option value="GS">South Georgia and the South Sandwich Islands</option>
-                <option value="SS">South Sudan</option>
-                <option value="ES">Spain</option>
-                <option value="LK">Sri Lanka</option>
-                <option value="SD">Sudan</option>
-                <option value="SR">Suriname</option>
-                <option value="SJ">Svalbard and Jan Mayen</option>
-                <option value="SE">Sweden</option>
-                <option value="CH">Switzerland</option>
-                <option value="SY">Syria</option>
-                <option value="TW">Taiwan</option>
-                <option value="TJ">Tajikistan</option>
-                <option value="TZ">Tanzania</option>
-                <option value="TH">Thailand</option>
-                <option value="TL">Timor-Leste</option>
-                <option value="TG">Togo</option>
-                <option value="TK">Tokelau</option>
-                <option value="TO">Tonga</option>
-                <option value="TT">Trinidad and Tobago</option>
-                <option value="TN">Tunisia</option>
-                <option value="TR">Turkey (Türkiye)</option>
-                <option value="TM">Turkmenistan</option>
-                <option value="TC">Turks and Caicos Islands</option>
-                <option value="TV">Tuvalu</option>
-                <option value="UM">U.S. Outlying Islands</option>
-                <option value="UG">Uganda</option>
-                <option value="UA">Ukraine</option>
-                <option value="AE">United Arab Emirates</option>
-                <option value="GB">United Kingdom</option>
-                <option value="US">United States</option>
-                <option value="UY">Uruguay</option>
-                <option value="UZ">Uzbekistan</option>
-                <option value="VU">Vanuatu</option>
-                <option value="VA">Vatican City Holy See</option>
-                <option value="VE">Venezuela</option>
-                <option value="VN">Vietnam</option>
-                <option value="VG">Virgin Islands, British</option>
-                <option value="VI">Virgin Islands, U.S</option>
-                <option value="WF">Wallis and Futuna</option>
-                <option value="EH">Western Sahara</option>
-                <option value="YE">Yemen</option>
-                <option value="ZM">Zambia</option>
-                <option value="ZW">Zimbabwe</option>
-              </select>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12 mb-1 relative">
-              <v-field
-                v-slot="{meta,field,errorMessage}"
-                :rules="checkSubdomain"
-                :validateOnInput="true"
-                name="site-name"
-                v-model="sitename"
+          <div class="space-y-6 lg:space-y-10">
+            <div class="flex items-start space-x-4">
+              <div
+                class="w-8 h-8 rounded-full bg-white border border-black flex items-center justify-center text-black font-medium shrink-0"
               >
-                <input
-                  id="site-name"
-                  type="text"
-                  onpaste="return false;"
-                  oninput="restrictInput(event)"
-                  autocomplete="off"
-                  pattern="^[a-zA-Z0-9 ]+$"
-                  placeholder="Site Name"
-                  v-bind="field"
-                  class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
-                  @input="convertToLowercase"
-                />
-                <div v-if=" errorMessage" class="feedback error-feedback">
-                  Site name is invalid or not available
-                </div>
-                <div
-                  class="success-feedback feedback"
-                  v-if="meta.dirty && meta.valid "
-                > 
-                  {{_(sitename)}} Subdomain is available
-                </div>
-              </v-field>
-              <div class="span site-name-right">.{{domain}}</div>
+                1
+              </div>
+              <div>
+                <h3
+                  class="text-lg lg:text-xl font-semibold mb-2 text-black-700"
+                >
+                  Comprehensive Lead Management
+                </h3>
+                <p class="text-black-300">
+                  Capture, track, and nurture leads efficiently with automated processes to maximize conversions and enhance sales performance.
+                </p>
+              </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-12 col-md-6 mb-1">
-              <v-field
-                class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
-                name="email"
-                type="text"
-                placeholder="Email"
-                v-model="email"
-                :rules="isEmailRegex"
-              ></v-field>
 
-              <error-message
-                name="email"
-                as="div"
-                class="feedback error-feedback"
-              ></error-message>
-            </div>
-            <div class="col-12 col-md-6 mb-1">
-              <v-field
-                v-slot="{meta,field,errorMessage}"
-                :rules="checkPasswordStrength"
-                :validateOnInput="true"
-                name="password"
-                v-model="password"
+            <div class="flex items-start space-x-4">
+              <div
+                class="w-8 h-8 rounded-full bg-white border border-black flex items-center justify-center text-black font-medium shrink-0"
               >
-                <input
-                  id="password"
-                  :type="showPassword ? 'text' : 'password'"
-                  placeholder="Password"
-                  v-bind="field"
-                  class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
-                />
-                <button
-                  type="button"
-                  @click="togglePasswordVisibility"
-                  class="absolute inset-y-0 right-4 mb-2 flex items-center text-gray-500 focus:outline-none"
+                2
+              </div>
+              <div>
+                <h3
+                  class="text-lg lg:text-xl font-semibold mb-2 text-black-700"
                 >
-                <svg v-if="showPassword" class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M1 12C1 12 5 20 12 20C19 20 23 12 23 12" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <circle cx="12" cy="12" r="3" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <svg v-else class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M2 2L22 22" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M6.71277 6.7226C3.66479 8.79527 2 12 2 12C2 12 5.63636 19 12 19C14.0503 19 15.8174 18.2734 17.2711 17.2884M11 5.05822C11.3254 5.02013 11.6588 5 12 5C18.3636 5 22 12 22 12C22 12 21.3082 13.3317 20 14.8335" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M14 14.2362C13.4692 14.7112 12.7684 15.0001 12 15.0001C10.3431 15.0001 9 13.657 9 12.0001C9 11.1764 9.33193 10.4303 9.86932 9.88818" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                </button>
-                <div v-if=" errorMessage" class="feedback long-feedback">
-                  {{errorMessage}}
-                </div>
-                <div
-                  class="success-feedback feedback"
-                  v-if="meta.dirty && meta.valid "
+                  Drip Campaign and Notifications
+                </h3>
+                <p class="text-black-300">
+                  Automate personalized messages, schedule timely alerts, and engage customers effectively to drive conversions and retention effortlessly.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start space-x-4">
+              <div
+                class="w-8 h-8 rounded-full bg-white border border-black flex items-center justify-center text-black font-medium shrink-0"
+              >
+                3
+              </div>
+              <div>
+                <h3
+                  class="text-lg lg:text-xl font-semibold mb-2 text-black-700"
                 >
-                  password is good to go
-                </div>
-              </v-field>
+                  Easily Configurable Automation with 100+
+                </h3>
+                <p class="text-black-300">
+                  Customize workflows seamlessly with 100+ integrations, optimizing business processes, increasing productivity, and enhancing overall operational efficiency.
+                </p>
+              </div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-12 col-md-6 mb-1 relative">
-              <v-field
-                style="padding-left: 50px !important"
-                class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
-                name="phone"
-                autocomplete="off"
-                type="text"
-                pattern="^[0-9]+$"
-                id="phone"
-                placeholder="Phone Number"
-                :rules="isPhoneRegex"
-              ></v-field>
 
-              <error-message
-                name="phone"
-                as="div"
-                class="feedback error-feedback"
-              ></error-message>
-            </div>
-            <div class="col-12 col-md-6">
-              <input
-                
-                type="text"
-                pattern="^[0-9]+$"
-                name="otp"
-                @input="verifyOTP"
-                id="otp"
-                placeholder="Enter OTP"
-                v-model="otp"
-                class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+          <div class="mt-8 lg:mt-12">
+            <h2
+              class="text-xl lg:text-2xl font-bold mb-6 lg:mb-8 text-center text-black-700"
+            >
+              Highly rated across category
+            </h2>
+            <div
+              class="flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-8"
+            >
+              <img
+                src="/assets/bettersaas/images/SAFR24.png"
+                alt="Front Runners"
+                class="lg:h-24"
+                style="height: 100px; width: 100px"
               />
-              <span id="otp-feedback" class="feedback"> </span>
+              <img
+                src="/assets/bettersaas/images/GetApp-Lead24.png"
+                alt="High Performer"
+                class="lg:h-24"
+                style="height: 100px; width: 120px"
+              />
+              <img
+                src="/assets/bettersaas/images/CTS24.png"
+                alt="Capterra"
+                class="lg:h-24"
+                style="height: 120px; width: 120px"
+              />
             </div>
           </div>
-          <div>
-            <div class="w-100 flex justify-content-center">
-            <p style="font-size: small; padding-top:2%;">
-            By submitting the OTP, I accept the <a href="https://onehash.ai/terms-of-use" target="_blank">Terms of Use</a> and <a href="https://onehash.ai/privacy" target="_blank">Privacy Policy</a>
-          </p>
         </div>
+      </div>
+
+      <div class="lg:hidden w-full flex flex-col items-center py-4 space-y-4">
+        <img
+          src="/assets/whitelabel/images/whitelabel_logo_long.svg"
+          alt="OneHash"
+          class="h-8"
+        />
+        <div class="text-center">
+          <h2 class="text-xl font-bold mb-1 text-black-700">
+            Get started with 30 days FREE trial
+          </h2>
+          <p class="text-black-500 text-sm">No credit card required</p>
+        </div>
+      </div>
+
+      <div class="w-full lg:w-5/12 py-12">
+        <div class="bg-white p-8 lg:p-6 rounded-xl shadow-sm">
+          <!-- Hide the heading on mobile, show on desktop -->
+          <div class="hidden lg:!block">
+            <h2 class="text-2xl font-bold mb-2 text-black-700">
+              Get started with 30 days FREE trial
+            </h2>
+            <p class="text-black-500 mb-8 text-sm">No credit card required</p>
           </div>
-          <div class="w-100 flex justify-content-center">
+
+          <v-form 
+            @submit="handleSubmit"
+            id="form"
+            v-slot="{meta, errorMessage}"
+            autocomplete="off"
+            novalidate="novalidate"
+            class="signup-form space-y-2 lg:space-y-6"
+            >
+            <div
+              class="g-recaptcha"
+              :data-sitekey="recaptchaSiteKey"
+              data-callback="onRecaptchaVerified"
+              data-size="invisible"
+            ></div>
+            <div class="grid grid-cols-2 gap-2 lg:gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-1 text-black-700"
+                  >First Name</label
+                >
+                <v-field 
+                  v-slot="{ field, errorMessage }" 
+                  :validateOnInput="true" 
+                  :rules="isRequired" 
+                  name="first_name"
+                  v-model="fname"
+                >
+                  <input
+                    v-bind="field"
+                    type="text"
+                    id="first_name"
+                    class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  <div class="mt-1 text-sm">
+                    <div v-if="errorMessage" class="text-red-500">
+                      {{ errorMessage }}
+                    </div>
+                  </div>
+                </v-field>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1 text-black-700"
+                  >Last Name</label
+                >
+                <v-field 
+                  v-slot="{ field, errorMessage }" 
+                  :validateOnInput="true" 
+                  :rules="isRequired" 
+                  name="last_name"
+                  v-model="lname"
+                >
+                  <input
+                    v-bind="field"
+                    type="text"
+                    id="last_name"
+                    class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  <div class="mt-1 text-sm">
+                    <div v-if="errorMessage" class="text-red-500">
+                      {{ errorMessage }}
+                    </div>
+                  </div>
+                </v-field>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1 text-black-700"
+                >Company Name</label
+              >
+                <v-field 
+                  v-slot="{ field, errorMessage }" 
+                  :validateOnInput="true" 
+                  :rules="isRequired" 
+                  name="company_name"
+                  v-model="company_name"
+                >
+                  <input
+                    v-bind="field"
+                    type="text"
+                    id="company_name"
+                    class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  <div class="mt-1 text-sm">
+                    <div v-if="errorMessage" class="text-red-500">
+                      {{ errorMessage }}
+                    </div>
+                  </div>
+                </v-field>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1 text-black-700"
+                >Master of Accounts</label
+              >
+              <select
+                id="country"
+                name="country"
+                v-model="country"
+                class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-[#f1f5f9] hover:bg-[#e2e8f0] appearance-none cursor-pointer"
+              ></select>
+              <p class="text-xs text-black-500 mt-1">
+                Based on your business location your account will be created
+              </p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1 text-black-700"
+                >Site Name</label
+              >
+                <v-field
+                  v-slot="{ meta, field, errorMessage }"
+                  :rules="checkSubdomain"
+                  :validateOnInput="true"
+                  name="sitename"
+                  v-model="sitename"
+                >
+                <div class="flex items-center space-x-2">
+                  <input
+                    v-bind="field"
+                    type="text"
+                    id="sitename"
+                    autocomplete="off"
+                    pattern="^[a-zA-Z0-9 ]+$"
+                    placeholder="Site Name"
+                    class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    @input="convertToLowercase"
+                  />
+                  <span class="ml-2 text-black-500 font-bold text-sm flex-shrink-0">.{{domain}}</span>
+                </div>
+                <div class="mt-1 text-sm">
+                  <div v-if="errorMessage" class="text-red-500">
+                    Site name is invalid or not available
+                  </div>
+                  <div v-if="meta.dirty && meta.valid" class="text-green-500">
+                    {{ _(sitename) }} Subdomain is available
+                  </div>
+                </div>
+                </v-field>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-4">
+              <div class="col-span-1">
+                <label class="block text-sm font-medium mb-1 text-black-700"
+                  >Email</label
+                >
+                <v-field
+                  v-slot="{field,errorMessage}"
+                  :validateOnInput="true"
+                  :rules="isEmailRegex"
+                  name="email"
+                  v-model="email"
+                >
+                <input
+                  v-bind="field"
+                  type="email"
+                  id="email"
+                  class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <div class="mt-1 text-sm">
+                  <div v-if="errorMessage" class="text-red-500">
+                    Please enter a valid email
+                  </div>
+                </div>
+              </v-field>
+              </div>
+              <div class="col-span-1">
+                <label class="block text-sm font-medium mb-1 text-black-700"
+                  >Password</label
+                >
+                <v-field
+                  v-slot="{meta,field,errorMessage}"
+                  :rules="checkPasswordStrength"
+                  :validateOnInput="true"
+                  name="password"
+                  v-model="password"
+                >
+                  <div class="relative">
+                    <input
+                      id="password"
+                      :type="showPassword ? 'text' : 'password'"
+                      placeholder="Password"
+                      v-bind="field"
+                      class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-14"
+                      />
+                    <button
+                      type="button"
+                      @click="togglePasswordVisibility"
+                      class="absolute inset-y-2 right-4 flex items-center justify-center w-8 h-8 text-gray-500 focus:outline-none"
+                    >
+                      <svg v-if="showPassword" class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M1 12C1 12 5 20 12 20C19 20 23 12 23 12" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="12" r="3" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      <svg v-else class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 2L22 22" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M6.71277 6.7226C3.66479 8.79527 2 12 2 12C2 12 5.63636 19 12 19C14.0503 19 15.8174 18.2734 17.2711 17.2884M11 5.05822C11.3254 5.02013 11.6588 5 12 5C18.3636 5 22 12 22 12C22 12 21.3082 13.3317 20 14.8335" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 14.2362C13.4692 14.7112 12.7684 15.0001 12 15.0001C10.3431 15.0001 9 13.657 9 12.0001C9 11.1764 9.33193 10.4303 9.86932 9.88818" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
+                    <div v-if="errorMessage" class="text-red-500 text-sm mt-1">
+                      {{ errorMessage }}
+                    </div>
+                    <div v-if="meta.dirty && meta.valid" class="text-green-500 text-sm mt-1">
+                      Password is good to go
+                    </div>
+                  </div>
+                </v-field>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-4">
+              <div class="col-span-1">
+                <label class="block text-sm font-medium mb-1 text-black-700">
+                  Phone Number
+                </label>
+                <v-field
+                  v-slot="{field,errorMessage}"
+                  name="phone"
+                  autocomplete="off"
+                  type="text"
+                  :rules="isPhoneRegex"
+                >
+                <input
+                  v-bind="field"
+                  type="text"
+                  id="phone"
+                  name="phone"
+                  placeholder="Phone Number"
+                  class="py-2 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <div v-if="errorMessage" class="text-red-500 text-sm mt-1">
+                  {{ errorMessage }}
+                </div>
+                </v-field>
+              </div>
+              <div class="col-span-1">
+                <label class="block text-sm font-medium mb-1 text-black-700"
+                  >OTP</label
+                >
+                <input
+                  type="text"
+                  pattern="^[0-9]+$"
+                  name="otp"
+                  @input="verifyOTP"
+                  id="otp"
+                  placeholder="Enter OTP"
+                  v-model="otp"
+                  class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <span id="otp-feedback" class="feedback"> </span>
+              </div>
+            </div>
+
             <button
               :disabled="otpVerificationStatus.sendingOTP || otpVerificationStatus.otpSent || otpVerificationStatus.waitingForResend || otpVerificationStatus.otpVerified"
-              type="submit"
-              class="submit_btn drop-shadow-md mt-5 disabled:opacity-50"
+              type="sumbit"
+              class="w-full bg-gray-700 text-white py-2 lg:py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors text-sm lg:text-base mt-2 lg:mt-4 disabled:opacity-50"
               style="
                 display: flex;
                 justify-content: center;
@@ -594,165 +516,200 @@
                 v-if="!otpVerificationStatus.otpSent && !otpVerificationStatus.otpVerified && !otpVerificationStatus.sendingOTP"
                 >Send OTP</span
               >
-              <span id="timer" v-if="!otpVerificationStatus.otpVerified"></span>
+              <span
+                id="timer"
+                v-if="!otpVerificationStatus.otpVerified"
+              ></span>
               <span v-if="otpVerificationStatus.sendingOTP">Sending OTP</span>
               <span v-if="otpVerificationStatus.otpVerified"
-                >Processing .... </span
-              >
+                >Processing ....
+              </span>
             </button>
+
+            <div class="text-left space-y-2">
+              <p class="text-sm text-black-600">
+                Already have an account?
+                <a href="/login" class="text-blue-600 hover:text-blue-700"
+                  >Sign in</a
+                >
+              </p>
+
+              <p class="text-left text-sm text-black-500">
+                By proceeding, you agree to our
+                <a
+                  href="https://onehash.ai/terms-of-use"
+                  class="text-blue-600 hover:text-blue-700"
+                  >Terms</a
+                >
+                and
+                <a
+                  href="https://onehash.ai/privacy"
+                  class="text-blue-600 hover:text-blue-700"
+                  >Privacy Policy</a
+                >.
+              </p>
+            </div>
+          </v-form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Site Creation UI - Shown after OTP verification -->
+    <div
+      class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white"
+      v-if="otpVerificationStatus.otpVerified"
+    >
+      <!-- OneHash Logo -->
+      <div class="mb-12 flex w-full justify-center">
+        <img
+          src="/assets/whitelabel/images/whitelabel_logo_long.svg"
+          alt="OneHash"
+          class="h-12"
+        />
+      </div>
+
+      <!-- Loading Animation -->
+      <div class="mb-8">
+        <div class="flex items-center justify-center">
+          <div
+            class="h-12 w-12 animate-spin rounded-full border-b-2 border-gray-400"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Progress Steps -->
+      <div
+        class="relative mx-auto flex w-full max-w-lg items-center justify-center"
+      >
+        <!-- Background progress bar (behind steps) -->
+        <div class="absolute top-4 left-0 w-4/6 h-1 bg-gray-200" style="left: 15%;"></div>
+
+        <!-- Animated Progress -->
+        <div
+          class="absolute top-4 left-0 h-1 bg-black transition-all duration-500 progress-bar"
+          :class="{
+          'progress-step-1': status.step1 === 'active',
+          'progress-step-2': status.step2 === 'active',
+          'progress-step-3': status.step3 === 'active'
+        }" style="left: 15%"
+        ></div>
+        <!-- Dynamically calculated progress width -->
+
+        <!-- Step 1 -->
+        <div class="relative flex flex-1 flex-col items-center">
+          <div
+            class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full"
+            :class="{
+              'bg-black text-white': status.step1 === 'active' || status.step1 === 'completed',
+              'bg-white text-black border border-gray-300': status.step1 !== 'active' && status.step1 !== 'completed',
+              'border-red-500': status.step1 === 'failed'
+            }"
+          >
+            1
           </div>
-          <div class="w-100 flex justify-content-center">
-            <p style="font-size: small; padding-top:2%;">
-            <a href="./login" target="_self">Already Registered?</a>
-          </p>
+          <div class="mt-2 text-center text-sm">Creating site</div>
         </div>
-        </v-form>
-        
-      </div>
-    </div>
-    <div class="right">
-      <div class="ad">
-        <div class="ad-title">
-          <div>Get started with the</div>
-          <div class="text-black">Most powerfull all in one software</div>
+
+        <!-- Step 2 -->
+        <div class="relative flex flex-1 flex-col items-center">
+          <div
+            class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full"
+            :class="{
+              'bg-black text-white': status.step2 === 'active' || status.step2 === 'completed',
+              'bg-white text-black border border-gray-300': status.step2 !== 'active' && status.step2 !== 'completed',
+              'border-red-500': status.step2 === 'failed'
+            }"
+          >
+            2
+          </div>
+          <div class="mt-2 text-center text-sm">Creating user</div>
         </div>
-        <img src="/assets/bettersaas/images/hero.svg" alt="" />
-        <img src="/assets/bettersaas/images/hero3.svg" alt="" class="mt-4" />
-        
-      </div>
-    </div>
-    <div class="create" v-if="otpVerificationStatus.otpVerified">
-      
-    <div class="left">
-      <center>
-      <img src="/assets/bettersaas/images/loader.gif" alt="" class="mt-4" />
-      <div class="loader-container fade-in-animation"> 
-        <div class="loading-text animate__animated animate__fadeIn" >
-          Hey <b>{{_(firstname)}}</b> , <br>Sit back and relax while we are creating your site <br><b>{{_(sitename)}}.{{domain}}</b>
+
+        <!-- Step 3 -->
+        <div class="relative flex flex-1 flex-col items-center">
+          <div
+            class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full"
+            :class="{
+              'bg-black text-white': status.step3 === 'active' || status.step3 === 'completed',
+              'bg-white text-black border border-gray-300': status.step3 !== 'active' && status.step3 !== 'completed',
+              'border-red-500': status.step3 === 'failed'
+            }"
+          >
+            3
+          </div>
+          <div class="mt-2 text-center text-sm">Redirecting</div>
         </div>
       </div>
-    
-   
-    
-      <div class="container2">    
-        <div class="progress2 progress-moved">
-          <div class="progress-bar2" >
-          </div>                       
-        </div> 
+
+      <!-- Message -->
+      <div class="w-full max-w-md px-4 mt-8 text-center">
+        <h2 class="mb-2 text-xl font-medium">Hey,</h2>
+        <p class="text-gray-700">
+          Sit back and relax while we are creating your site
+        </p>
+        <p class="mt-1 font-medium text-gray-700">
+          <b>{{_(sitename)}}.{{domain}}</b>
+        </p>
       </div>
-      <ol class="steps">
-       
-      <li
-        class="step"
-        data-step="1"
-        id="step1"
-        :class="{'is-complete':status.step1 == 'completed','is-active':status.step1 == 'active'}"
-      >
-        Creating site
-      </li>
-      <li
-        class="step"
-        data-step="2"
-        id="step2"
-        :class="{'is-complete':status.step2 == 'completed','is-active':status.step2 == 'active'}"
-      >
-        Creating user
-      </li>
-      <li
-        class="step"
-        data-step="3"
-        id="step3"
-        :class="{'is-complete':status.step3 == 'completed','is-active':status.step3 == 'active'}"
-      >
-        Redirecting
-      </li>
-      </ol>
-      
-    </center>
-  </div>
-  <div class="right">
-    <div class="ad">
-      <img src="https://www.radical.co.in/wp-content/uploads/2020/06/How-Long-Does-PPC-Take-to-Work.gif" style="height: 30%; width: 30%;" alt="" />
-      <div class="ad-title mb-3">
-        <div>Get started with the</div>
-        <div class="text-black">Most powerfull all in one software</div>
-      </div>
-      
-      <img src="/assets/bettersaas/images/hero3.svg" alt="" class="mt-4" />
-      
     </div>
   </div>
-    </div>
-  </main>
-</div>
-{% endblock %} {% block script %}
-<script>
-  function restrictInput(event) {
-            const inputField = event.target;
-            const currentValue = inputField.value;
+  {% endblock %} {% block script %}
+  <script>
+    function restrictInput(event) {
+        const inputField = event.target;
+        const currentValue = inputField.value;
 
-            // Remove special characters and spaces
-            const sanitizedValue = currentValue.replace(/[^a-zA-Z0-9]/g, '');
+        // Remove special characters and spaces
+        const sanitizedValue = currentValue.replace(/[^a-zA-Z0-9]/g, '');
 
-            // Update the input field with the sanitized value
-            inputField.value = sanitizedValue;
-        }
-                   document.addEventListener("contextmenu", function (event) {
-                     event.preventDefault();
-                   });
-                   
-                   // Block opening of inspect element on Windows
-                   document.addEventListener("keydown", function (event) {
-                     // Check for F12 key or Ctrl+Shift+I (Inspect Element shortcut)
-                     if (
-                       event.key === "F12" ||
-                       (event.ctrlKey && event.shiftKey && event.key === "I")
-                     ) {
-                       event.preventDefault();
-                     }
-                   });
-                   
-                   // Block opening of inspect element on Mac
-                   document.addEventListener("keydown", function (event) {
-                     // Check for Cmd+Option+I (Inspect Element shortcut)
-                     if (event.metaKey && event.altKey && event.key === "I") {
-                       event.preventDefault();
-                     }
-                   });
-</script>
-<script>
-  $( 'body' ).on( 'keypress', ':input[pattern]', function( ev ) {
-      var regex  = new RegExp( $(this).attr( 'pattern' ) );
-      var newVal = $(this).val() + String.fromCharCode(!ev.charCode ? ev.which : ev.charCode);
-
-      if ( regex.test( newVal ) ) {
-          return true;
-      } else {
-          ev.preventDefault();
-          return false;
+        // Update the input field with the sanitized value
+        inputField.value = sanitizedValue;
+    }
+    
+    document.addEventListener("contextmenu", function (event) {
+      event.preventDefault();
+    });
+    
+    // Block opening of inspect element on Windows
+    document.addEventListener("keydown", function (event) {
+      // Check for F12 key or Ctrl+Shift+I (Inspect Element shortcut)
+      if (
+        event.key === "F12" ||
+        (event.ctrlKey && event.shiftKey && event.key === "I")
+      ) {
+        event.preventDefault();
       }
-  } );
-</script>
-<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-<script
-  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
-  integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
-  crossorigin="anonymous"
-  referrerpolicy="no-referrer"
-></script>
-<script
-  src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"
-  integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA=="
-  crossorigin="anonymous"
-  referrerpolicy="no-referrer"
-></script>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://www.google.com/recaptcha/api.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
-<script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js"></script>
-<script src="https://unpkg.com/@popperjs/core@2"></script>
-<script src="https://unpkg.com/vee-validate@4.5.8/dist/vee-validate.js"></script>
-<script src="./config.js"></script>
-<script src="./signup.js"></script>
-
-; {% endblock %}
+    });
+    
+    // Block opening of inspect element on Mac
+    document.addEventListener("keydown", function (event) {
+      // Check for Cmd+Option+I (Inspect Element shortcut)
+      if (event.metaKey && event.altKey && event.key === "I") {
+        event.preventDefault();
+      }
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+    integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"
+    integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.google.com/recaptcha/api.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+  <script src="https://unpkg.com/vee-validate@4.5.8/dist/vee-validate.js"></script>
+  <script src="./config.js"></script>
+  <script src="./signup.js"></script>
+  ; {% endblock %}
+</body>
+</html>

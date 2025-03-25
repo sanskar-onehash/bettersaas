@@ -5,11 +5,23 @@ function getDomain() {
   }
   return domain;
 }
-window.onload = function () {
-  document.getElementById("main").style.visibility = "visible";
-  document.getElementById("spinner-bg").style.height = "0vh";
-  document.querySelector(".spinner-border").style.visibility = "hidden";
-};
+
+document.addEventListener("DOMContentLoaded", function () {
+  const mainElement = document.getElementById("main");
+  const spinnerBgElement = document.getElementById("spinner-bg");
+  const spinnerBorderElement = document.querySelector(".spinner-border");
+
+  if (mainElement) {
+    mainElement.style.visibility = "visible";
+  }
+  if (spinnerBgElement) {
+    spinnerBgElement.style.height = "0vh";
+  }
+  if (spinnerBorderElement) {
+    spinnerBorderElement.style.visibility = "hidden";
+  }
+});
+
 VeeValidate.configure({
   validateOnBlur: true, 
   validateOnChange: true,
@@ -87,6 +99,31 @@ window.Vue.createApp({
 
   async mounted() {
     window.onRecaptchaVerified = this.onRecaptchaVerified;
+    const countrySelect = document.getElementById("country");
+
+    if (countrySelect) {
+      try {
+        const response = await fetch("https://restcountries.com/v3.1/all");
+        const countries = await response.json();
+
+        const countryList = countries
+        .map((country) => ({
+          name: country.name.common,
+          code: country.cca2,
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+        countryList.forEach((country) => {
+          const option = document.createElement("option");
+          option.value = country.code;
+          option.textContent = country.name;
+          countrySelect.appendChild(option);
+        });
+
+      } catch (error) {
+        console.error("Error fetching country list:", error);
+      }
+    }
 
     const phoneInputField = document.querySelector("#phone");
     const phoneInput = window.intlTelInput(phoneInputField, {
@@ -101,8 +138,7 @@ window.Vue.createApp({
           "jsonp"
         ).always((resp) => {
           let countryCode = resp && resp.country ? resp.country : "us";
-          const countrySelect = document.getElementById("country");
-          countrySelect.value = countryCode;
+          this.country = countryCode;
           callback(countryCode);
         });
       },
@@ -175,7 +211,7 @@ window.Vue.createApp({
             config.HTTP_METHODS.CHECK_SUBDOMAIN.ENDPOINT,
           type: config.HTTP_METHODS.CHECK_SUBDOMAIN.METHOD,
           data: {
-            subdomain: sitename,
+            subdomain: this.sitename, 
           },
         });
         if (
@@ -267,7 +303,7 @@ window.Vue.createApp({
         t_phone = this.phoneInput.getNumber();
       }
 
-      frappe.show_alert("Please check your email or phone for the OTP", 5);
+      // frappe.show_alert("Please check your email or phone for the OTP", 5);
       // send otp and set otpSent to true;
       let message;
       const resp = await $.ajax({
