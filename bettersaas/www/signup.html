@@ -96,20 +96,7 @@
     }
 
     .progress-bar {
-      width: 33.33%; 
-      transition: width 0.5s ease; 
-    }
-
-    .progress-step-1 {
-      width: 23%; 
-    }
-
-    .progress-step-2 {
-      width: 46%; 
-    }
-
-    .progress-step-3 {
-      width: 70%; 
+      transition: width 1s ease-in-out; 
     }
 
     .iti {
@@ -245,7 +232,6 @@
 
       <div class="w-full lg:w-5/12 py-12">
         <div class="bg-white p-8 lg:p-6 rounded-xl shadow-sm">
-          <!-- Hide the heading on mobile, show on desktop -->
           <div class="hidden lg:!block">
             <h2 class="text-2xl font-bold mb-2 text-black-700">
               Get started with 30 days FREE trial
@@ -559,7 +545,6 @@
       class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white"
       v-if="otpVerificationStatus.otpVerified"
     >
-      <!-- OneHash Logo -->
       <div class="mb-12 flex w-full justify-center">
         <img
           src="/assets/whitelabel/images/whitelabel_logo_long.svg"
@@ -568,7 +553,6 @@
         />
       </div>
 
-      <!-- Loading Animation -->
       <div class="mb-8">
         <div class="flex items-center justify-center">
           <div
@@ -577,23 +561,15 @@
         </div>
       </div>
 
-      <!-- Progress Steps -->
       <div
         class="relative mx-auto flex w-full max-w-lg items-center justify-center"
       >
-        <!-- Background progress bar (behind steps) -->
         <div class="absolute top-4 left-0 w-4/6 h-1 bg-gray-200" style="left: 15%;"></div>
 
-        <!-- Animated Progress -->
         <div
-          class="absolute top-4 left-0 h-1 bg-black transition-all duration-500 progress-bar"
-          :class="{
-          'progress-step-1': status.step1 === 'active',
-          'progress-step-2': status.step2 === 'active',
-          'progress-step-3': status.step3 === 'active'
-        }" style="left: 15%"
+          class="absolute top-4 left-0 h-1 bg-black transition-all duration-500"
+          :style="{ width: progressWidth, left: '15%' }"
         ></div>
-        <!-- Dynamically calculated progress width -->
 
         <!-- Step 1 -->
         <div class="relative flex flex-1 flex-col items-center">

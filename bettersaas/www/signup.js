@@ -96,7 +96,24 @@ window.Vue.createApp({
     VField: VeeValidate.Field,
     ErrorMessage: VeeValidate.ErrorMessage,
   },
-
+  computed: {
+    progressWidth() {
+      if (this.status.step3 === 'completed') {
+        return '70%';
+      } else if (this.status.step3 === 'active') {
+        return '50%';
+      } else if (this.status.step2 === 'completed') {
+        return '40%';
+      } else if (this.status.step2 === 'active') {
+        return '30%';
+      } else if (this.status.step1 === 'completed') {
+        return '20%';
+      } else if (this.status.step1 === 'active') {
+        return '10%';
+      }
+      return '0%';
+    }
+  },
   async mounted() {
     window.onRecaptchaVerified = this.onRecaptchaVerified;
     const countrySelect = document.getElementById("country");
