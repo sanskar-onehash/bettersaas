@@ -406,7 +406,7 @@ class SaaSSites(Document):
 
     @property
     def custom_domains(self):
-        domains = frappe.get_site_config(site_path=self.site_name).get("domains")
+        domains = frappe.get_site_config(site_path=self.site_name).get("domains", [])
         arr = []
         for item in domains:
             if isinstance(item, str):
