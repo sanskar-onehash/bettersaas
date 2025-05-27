@@ -426,6 +426,12 @@ window.Vue.createApp({
     onRecaptchaVerified() {
       this.onSubmit();
     },
+    isLetter(event) {
+      const char = String.fromCharCode(event.keyCode);
+      if (!/^[A-Za-z]+$/.test(char)) {
+        event.preventDefault();
+      }
+    },
     convertToLowercase(event) {
       this.sitename = event.target.value.toLowerCase();
     },
