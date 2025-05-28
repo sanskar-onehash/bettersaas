@@ -6,6 +6,7 @@ import json
 import os
 import boto3
 import requests
+import json
 import subprocess as sp
 from bettersaas.bettersaas.doctype.saas_users.saas_users import create_user
 from frappe import _
@@ -16,15 +17,95 @@ from frappe.utils.password import decrypt, encrypt
 from frappe.model.document import Document
 
 @frappe.whitelist()
-def get_users_list(site_name):
-    from frappe.frappeclient import FrappeClient
-    site = frappe.db.get("SaaS Sites", filters={"site_name": site_name})
-    site_password = decrypt(site.encrypted_password, frappe.conf.encryption_key)
-    conn = FrappeClient("http://"+site_name, "Administrator", site_password)
-    total_users = conn.get_list('User', fields = ['name', 'first_name', 'last_name', 'enabled', 'last_active','user_type'],limit_page_length=10000)
-    active_users = conn.get_list('User', fields = ['name', 'first_name', 'last_name','last_active','user_type'], filters = {'enabled':'1'},limit_page_length=10000)
-    return {"total_users":total_users, "active_users":active_users}
+def create_user_entry_in_saas_site():
+    try:
+        data = frappe.local.form_dict
 
+        site_name = data.get("site_name")
+        email = data.get("email")
+        firstname = data.get("firstname")
+        lastname = data.get("lastname")
+        user_type = data.get("user_type")
+        enabled = int(data.get("enabled"))
+        last_active = data.get("last_active")
+
+        saas_site_doc = frappe.get_doc("SaaS Sites", site_name)
+        for user in saas_site_doc.user_details:
+            if user.email_id == email:
+                return {"status": "OK", "message": "User already exists"}
+
+        saas_site_doc.append('user_details', {
+            'first_name': firstname,
+            'last_name': lastname,
+            'user_type': user_type,
+            'active': enabled,
+            'email_id': email,
+            'last_active': last_active
+        })
+        saas_site_doc.save(ignore_permissions=True)
+        frappe.db.commit()
+
+        return {"status": "OK", "message": f"User {email} on site {site_name} created"}
+    except Exception as e:
+        return {"status": "FAILED", "message": str(e)}
+
+@frappe.whitelist()
+def update_user_entry_in_saas_site():
+    try:
+        data = frappe.local.form_dict
+
+        site_name = data.get("site_name")
+        email = data.get("email")
+        firstname = data.get("firstname")
+        lastname = data.get("lastname")
+        user_type = data.get("user_type")
+        enabled = int(data.get("enabled"))
+        last_active = data.get("last_active")
+
+        saas_site_doc = frappe.get_doc("SaaS Sites", site_name)
+
+        found = False
+        for user in saas_site_doc.user_details:
+            if user.email_id == email:
+                user.first_name = firstname
+                user.last_name = lastname
+                user.user_type = user_type
+                user.active = enabled
+                user.last_active = last_active
+                found = True
+                break
+
+        if not found:
+            return {"status": "FAILED", "message": "User not found"}
+
+        saas_site_doc.save(ignore_permissions=True)
+        frappe.db.commit()
+
+        return {"status": "OK", "message": f"User {email} on site {site_name} updated"}
+    except Exception as e:
+        return {"status": "FAILED", "message": str(e)}
+     
+@frappe.whitelist()
+def delete_user_entry_in_saas_site():
+    try:
+        data = frappe.local.form_dict
+
+        site_name = data.get("site_name")
+        email = data.get("email")
+
+        saas_site_doc = frappe.get_doc("SaaS Sites", site_name)
+
+        for user in saas_site_doc.user_details:
+            if user.email_id == email:
+                saas_site_doc.remove(user)
+                break
+        saas_site_doc.save(ignore_permissions=True)
+        frappe.db.commit()
+        
+        return {"status": "OK", "message": f"User {email} removed from site {site_name}"}
+    except Exception as e:
+        return {"status": "FAILED", "message": str(e)}
+    
 @frappe.whitelist()
 def login(name):
 	return frappe.get_doc("SaaS Sites",name).get_login_sid()
