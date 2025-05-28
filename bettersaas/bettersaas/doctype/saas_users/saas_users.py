@@ -8,9 +8,7 @@ import json
 import requests
 from frappe import _
 from frappe.frappeclient import FrappeClient
-from frappe.utils.password import decrypt
 from frappe.model.document import Document
-
 
 def get_stock_sites():
     req = requests.get(
@@ -35,31 +33,14 @@ def get_user_sites(email):
     if not email:
         return
     
-    from frappe.utils import get_sites
-
-    sites = get_sites()
+    all_sites = frappe.get_all("SaaS Sites", fields=["name"])
     user_sites = []
-    stock_sites = get_stock_sites()
-    stock_subdomains_set = {site['subdomain'] for site in stock_sites}
-    for site in sites:
-        try:
-            if site.split('.')[0] in stock_subdomains_set:
-                continue
-
-            if site == frappe.conf.admin_url:
-                conn = FrappeClient("http://"+site, "Administrator", frappe.conf.administrator_password)
-                user = conn.get_list('User', fields = ['name', 'email'], filters={'email': email}, limit_page_length=10000)
-            else:
-                saas_site = frappe.db.get("SaaS Sites", filters={"site_name": site})
-                site_password = decrypt(saas_site.encrypted_password, frappe.conf.encryption_key)
-                conn = FrappeClient("http://"+saas_site.name, "Administrator", site_password)
-                user = conn.get_list('User', fields = ['name', 'email'], filters={'email': email}, limit_page_length=10000)
-
-            if user:
-                user_sites.append(site)
-
-        except Exception:
-            pass
+    for site in all_sites:
+        site_doc = frappe.get_doc("SaaS Sites", site.name)
+        for user in site_doc.user_details:
+            if user.email_id == email:
+                user_sites.append(site.name)
+                break
 
     return {"user_sites": user_sites}
 
