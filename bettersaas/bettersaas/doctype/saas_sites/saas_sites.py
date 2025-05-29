@@ -76,7 +76,14 @@ def update_user_entry_in_saas_site():
                 break
 
         if not found:
-            return {"status": "FAILED", "message": "User not found"}
+            saas_site_doc.append('user_details', {
+                'first_name': firstname,
+                'last_name': lastname,
+                'user_type': user_type,
+                'active': enabled,
+                'email_id': email,
+                'last_active': last_active
+            })
 
         saas_site_doc.save(ignore_permissions=True)
         frappe.db.commit()
