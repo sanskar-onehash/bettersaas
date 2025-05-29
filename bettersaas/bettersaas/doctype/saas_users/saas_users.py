@@ -8,7 +8,18 @@ import json
 import requests
 from frappe import _
 from frappe.frappeclient import FrappeClient
+from frappe.utils.password import decrypt
 from frappe.model.document import Document
+
+@frappe.whitelist()
+def get_users_list(site_name):
+    from frappe.frappeclient import FrappeClient
+    site = frappe.db.get("SaaS Sites", filters={"site_name": site_name})
+    site_password = decrypt(site.encrypted_password, frappe.conf.encryption_key)
+    conn = FrappeClient("http://"+site_name, "Administrator", site_password)
+    total_users = conn.get_list('User', fields = ['name', 'first_name', 'last_name', 'enabled', 'last_active','user_type'],limit_page_length=10000)
+    active_users = conn.get_list('User', fields = ['name', 'first_name', 'last_name','last_active','user_type'], filters = {'enabled':'1'},limit_page_length=10000)
+    return {"total_users":total_users, "active_users":active_users}
 
 def get_stock_sites():
     req = requests.get(
