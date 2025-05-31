@@ -465,11 +465,12 @@ class SaaSSites(Document):
     def __init__(self, *args, **kwargs):
         super(SaaSSites, self).__init__(*args, **kwargs)
         self.site_config = {}
-        site_path = os.path.join(get_bench_path(), "sites", self.site_name)
-        config_file = os.path.join(site_path, "site_config.json")
+        if hasattr(self, 'site_name') and self.site_name:
+            site_path = os.path.join(get_bench_path(), "sites", self.site_name)
+            config_file = os.path.join(site_path, "site_config.json")
 
-        if os.path.exists(config_file):
-            self.site_config = frappe.get_site_config(site_path=self.site_name)
+            if os.path.exists(config_file):
+                self.site_config = frappe.get_site_config(site_path=self.site_name)
 
     @property
     def license_limit(self):
