@@ -362,6 +362,9 @@
                     class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     @keypress="isLetter($event)"
                     @input="convertToLowercase"
+                    @copy.prevent
+                    @cut.prevent
+                    @paste.prevent
                   />
                   <span class="ml-2 text-black-500 font-bold text-sm flex-shrink-0">.{{domain}}</span>
                 </div>

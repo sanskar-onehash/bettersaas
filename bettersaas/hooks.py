@@ -11,8 +11,13 @@ app_license = "MIT"
 # ------------------ 
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/bettersaas/css/bettersaas.css"
-# app_include_js = "/assets/bettersaas/js/bettersaas.js"
+app_include_css = "/assets/bettersaas/css/activity.css"
+app_include_js = [
+    "https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js",
+    "/assets/bettersaas/js/copilot.js",
+    "/assets/bettersaas/js/activity.js",
+]
+
 
 # include js, css files in header of web template
 # web_include_css = "/assets/bettersaas/css/bettersaas.css"
@@ -215,6 +220,3 @@ override_whitelisted_methods = {
 # auth_hooks = [
 # 	"bettersaas.auth.validate"
 # ]
-app_include_js = [
-    "https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"
-]
