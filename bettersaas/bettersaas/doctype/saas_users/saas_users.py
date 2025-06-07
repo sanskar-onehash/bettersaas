@@ -41,6 +41,13 @@ def get_user_sites(email):
             if user.email_id == email:
                 user_sites.append(site.name)
                 break
+    
+    if email.strip().endswith("@onehash.ai"):
+        admin_site = frappe.conf.admin_url
+        conn = FrappeClient("http://"+ admin_site, "Administrator", frappe.conf.administrator_password)
+        user = conn.get_list('User', fields = ['name', 'email'], filters={'email': email})
+        if user:
+            user_sites.append(admin_site)
 
     return {"user_sites": user_sites}
 
