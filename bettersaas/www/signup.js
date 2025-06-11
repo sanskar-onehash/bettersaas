@@ -120,7 +120,7 @@ window.Vue.createApp({
 
     if (countrySelect) {
       try {
-        const response = await fetch("https://restcountries.com/v3.1/all");
+        const response = await fetch("https://restcountries.com/v3.1/all?fields=name,cca2");
         const countries = await response.json();
 
         const countryList = countries
