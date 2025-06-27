@@ -25,7 +25,6 @@ const config = {
     SUBDOMAIN_NOT_AVAILABLE: "Subdomain is not available",
   },
   SITE_CREATION_POLL_TIME: 3000,
-  EMAIL_REGEX: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
   HTTP_METHODS: {
     CHECK_SUBDOMAIN: {
       ENDPOINT:

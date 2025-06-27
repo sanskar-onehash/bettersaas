@@ -191,8 +191,7 @@ window.Vue.createApp({
     },
     isEmailRegex(value) {
       if (value && value.length > 0) {
-        const emailRegex = new RegExp(config.EMAIL_REGEX);
-        if (emailRegex.test(value)) {
+        if (validator.isEmail(value)) {
           return true;
         }
         return config.ERROR_MESSAGES.INVALID_EMAIL;
@@ -426,9 +425,10 @@ window.Vue.createApp({
     onRecaptchaVerified() {
       this.onSubmit();
     },
-    isLetter(event) {
+    isAlNum(event) {
       const char = String.fromCharCode(event.keyCode);
-      if (!/^[A-Za-z]+$/.test(char)) {
+      const regex = /^[a-zA-Z0-9]+$/;
+      if (!regex.test(char)) {
         event.preventDefault();
       }
     },
