@@ -360,7 +360,7 @@
                     autocomplete="off"
                     placeholder="Site Name"
                     class="w-full px-3 py-2 lg:px-4 lg:py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    @keypress="isLetter($event)"
+                    @keypress="isAlNum($event)"
                     @input="convertToLowercase"
                     @copy.prevent
                     @cut.prevent
@@ -686,6 +686,7 @@
   <script src="https://www.google.com/recaptcha/api.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vee-validate/4.5.8/vee-validate.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/validator/13.15.15/validator.min.js"></script>
   <script src="./config.js"></script>
   <script src="./signup.js"></script>
   ; {% endblock %}
