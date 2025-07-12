@@ -4,7 +4,7 @@
   "creation": "2025-07-12 20:44:23.829961",
   "doctype": "DocType",
   "engine": "InnoDB",
-  "field_order": ["token", "expiry"],
+  "field_order": ["token", "user_ip", "expiry"],
   "fields": [
     {
       "fieldname": "token",
@@ -12,6 +12,11 @@
       "in_list_view": 1,
       "label": "Token",
       "reqd": 1
+    },
+    {
+      "fieldname": "user_ip",
+      "fieldtype": "Data",
+      "label": "User IP"
     },
     {
       "fieldname": "expiry",
@@ -44,4 +49,3 @@
   "sort_order": "DESC",
   "states": []
 }
-
