@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 VeeValidate.configure({
-  validateOnBlur: true, 
+  validateOnBlur: true,
   validateOnChange: true,
   validateOnInput: true,
 });
@@ -83,7 +83,8 @@ window.Vue.createApp({
       targetSubdomain: "",
       otpSent: false,
       country: "",
-      recaptchaSiteKey: config.RECAPTCHA_SITE_KEY, 
+      userIp: null,
+      recaptchaSiteKey: config.RECAPTCHA_SITE_KEY,
       status: {
         step1: "neutral",
         step2: "neutral",
@@ -98,21 +99,21 @@ window.Vue.createApp({
   },
   computed: {
     progressWidth() {
-      if (this.status.step3 === 'completed') {
-        return '70%';
-      } else if (this.status.step3 === 'active') {
-        return '50%';
-      } else if (this.status.step2 === 'completed') {
-        return '40%';
-      } else if (this.status.step2 === 'active') {
-        return '30%';
-      } else if (this.status.step1 === 'completed') {
-        return '20%';
-      } else if (this.status.step1 === 'active') {
-        return '10%';
+      if (this.status.step3 === "completed") {
+        return "70%";
+      } else if (this.status.step3 === "active") {
+        return "50%";
+      } else if (this.status.step2 === "completed") {
+        return "40%";
+      } else if (this.status.step2 === "active") {
+        return "30%";
+      } else if (this.status.step1 === "completed") {
+        return "20%";
+      } else if (this.status.step1 === "active") {
+        return "10%";
       }
-      return '0%';
-    }
+      return "0%";
+    },
   },
   async mounted() {
     window.onRecaptchaVerified = this.onRecaptchaVerified;
@@ -120,15 +121,17 @@ window.Vue.createApp({
 
     if (countrySelect) {
       try {
-        const response = await fetch("https://restcountries.com/v3.1/all?fields=name,cca2");
+        const response = await fetch(
+          "https://restcountries.com/v3.1/all?fields=name,cca2",
+        );
         const countries = await response.json();
 
         const countryList = countries
-        .map((country) => ({
-          name: country.name.common,
-          code: country.cca2,
-        }))
-        .sort((a, b) => a.name.localeCompare(b.name));
+          .map((country) => ({
+            name: country.name.common,
+            code: country.cca2,
+          }))
+          .sort((a, b) => a.name.localeCompare(b.name));
 
         countryList.forEach((country) => {
           const option = document.createElement("option");
@@ -136,7 +139,6 @@ window.Vue.createApp({
           option.textContent = country.name;
           countrySelect.appendChild(option);
         });
-
       } catch (error) {
         console.error("Error fetching country list:", error);
       }
@@ -152,16 +154,16 @@ window.Vue.createApp({
         $.get(
           "https://ipinfo.io?token=" + config.IPINFO_TOKEN,
           () => {},
-          "jsonp"
+          "jsonp",
         ).always((resp) => {
           let countryCode = resp && resp.country ? resp.country : "us";
           this.country = countryCode;
+          this.userIp = resp && resp.ip ? resp.ip : null;
           callback(countryCode);
         });
       },
     });
-    phoneInputField.addEventListener("countrychange", () => {
-    });
+    phoneInputField.addEventListener("countrychange", () => {});
     this.phoneInput = phoneInput;
   },
   methods: {
@@ -208,11 +210,11 @@ window.Vue.createApp({
       return config.ERROR_MESSAGES.INVALID_PHONE;
     },
 
-    async onSubmit() {
+    async onSubmit(userRecaptchaToken) {
       this.country = document.getElementById("country").value;
       this.phone = this.phoneInput.getNumber();
       this.otpVerificationStatus.setSendingOTP();
-      this.sendOtp();
+      this.sendOtp(userRecaptchaToken);
     },
 
     async checkSubdomain(sitename) {
@@ -227,7 +229,7 @@ window.Vue.createApp({
             config.HTTP_METHODS.CHECK_SUBDOMAIN.ENDPOINT,
           type: config.HTTP_METHODS.CHECK_SUBDOMAIN.METHOD,
           data: {
-            subdomain: this.sitename, 
+            subdomain: this.sitename,
           },
         });
         if (
@@ -292,7 +294,7 @@ window.Vue.createApp({
         this.status.step3 = "completed";
         const pass = this.password.replaceAll(/#/g, "%23");
         enc_password = CryptoJS.enc.Base64.stringify(
-          CryptoJS.enc.Utf8.parse(pass)
+          CryptoJS.enc.Utf8.parse(pass),
         );
         const query = `?domain=${this.sitename}&email=${this.email}&utm_id=${enc_password}&firstname=${this.fname}&lastname=${this.lname}&companyname=${this.company_name}&country=${this.country}&createUser=true`;
         this.status.step2 = "completed";
@@ -309,8 +311,8 @@ window.Vue.createApp({
           this.checkSiteCreatedPoll();
         }, config.SITE_CREATION_POLL_TIME);
       }
-    }, 
-    async sendOtp() {
+    },
+    async sendOtp(userRecaptchaToken) {
       if (!this.isEmailRegex(this.email)) {
         return;
       }
@@ -332,7 +334,12 @@ window.Vue.createApp({
           [config.HTTP_METHODS.SEND_OTP.DATA.LNAME]: this.lname,
           [config.HTTP_METHODS.SEND_OTP.DATA.CNAME]: this.company_name,
           [config.HTTP_METHODS.SEND_OTP.DATA.SITE_NAME]: this.sitename,
-          [config.HTTP_METHODS.SEND_OTP.DATA.URL_PARAMS]: JSON.stringify(Object.fromEntries(new URLSearchParams(window.location.search))),
+          [config.HTTP_METHODS.SEND_OTP.DATA.URL_PARAMS]: JSON.stringify(
+            Object.fromEntries(new URLSearchParams(window.location.search)),
+          ),
+          [config.HTTP_METHODS.SEND_OTP.DATA.USER_RECAPTCHA_TOKEN]:
+            userRecaptchaToken,
+          [config.HTTP_METHODS.SEND_OTP.DATA.USER_IP]: this.userIp,
         },
       });
       message = resp.message;
@@ -348,7 +355,7 @@ window.Vue.createApp({
       }
       this.otpVerificationStatus.setVerifyingOTP();
       document.getElementById(
-        config.DOM_ELEMENT_SELECTOR.OTP_FEEDBACK
+        config.DOM_ELEMENT_SELECTOR.OTP_FEEDBACK,
       ).innerHTML = config.FEEDBACK.VERIFYING_OTP;
       if (!this.isEmailRegex(this.email)) {
         return config.ERROR_MESSAGES.INVALID_EMAIL;
@@ -366,16 +373,16 @@ window.Vue.createApp({
       if (message === config.HTTP_METHODS.VERIFY_OTP.SUCCESS_MESSAGE) {
         this.otpVerificationStatus.otpVerified = true;
         document.getElementById(
-          config.DOM_ELEMENT_SELECTOR.OTP_FEEDBACK
+          config.DOM_ELEMENT_SELECTOR.OTP_FEEDBACK,
         ).innerHTML = config.FEEDBACK.OTP_VERIFIED;
         this.createSite();
       } else if (message === "OTP_EXPIRED") {
         document.getElementById(
-          config.DOM_ELEMENT_SELECTOR.OTP_FEEDBACK
+          config.DOM_ELEMENT_SELECTOR.OTP_FEEDBACK,
         ).innerHTML = config.ERROR_MESSAGES.OTP_EXPIRED;
       } else if (message == "INVALID_OTP") {
         document.getElementById(
-          config.DOM_ELEMENT_SELECTOR.OTP_FEEDBACK
+          config.DOM_ELEMENT_SELECTOR.OTP_FEEDBACK,
         ).innerHTML = config.ERROR_MESSAGES.INVALID_OTP;
       }
       this.otpVerificationStatus.verifyingOTP = false;
@@ -422,8 +429,8 @@ window.Vue.createApp({
     handleSubmit() {
       grecaptcha.execute();
     },
-    onRecaptchaVerified() {
-      this.onSubmit();
+    onRecaptchaVerified(userRecaptchaToken) {
+      this.onSubmit(userRecaptchaToken);
     },
     isAlNum(event) {
       const char = String.fromCharCode(event.keyCode);
@@ -440,3 +447,4 @@ window.Vue.createApp({
     },
   },
 }).mount("#main");
+

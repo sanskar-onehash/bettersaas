@@ -10,29 +10,34 @@ from frappe import _
 from frappe.frappeclient import FrappeClient
 from frappe.model.document import Document
 
+from bettersaas.bettersaas.auth import verify_guest_id, verify_recaptcha_response
+
+
 def get_stock_sites():
     req = requests.get(
-            "http://"
-            + frappe.conf.admin_url
-            + "/api/method/bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.get_all_stock_sites"
-        ).json()
-    
+        "http://"
+        + frappe.conf.admin_url
+        + "/api/method/bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.get_all_stock_sites"
+    ).json()
+
     return req["message"]
+
 
 @frappe.whitelist(allow_guest=True)
 def check_user_name_and_password(site_name, email, password):
     try:
-        conn = FrappeClient("http://"+site_name, email, password)
+        conn = FrappeClient("http://" + site_name, email, password)
         if conn:
             return "VALID"
     except Exception as e:
         return "INVALID"
 
+
 @frappe.whitelist(allow_guest=True)
 def get_user_sites(email):
     if not email:
         return
-    
+
     all_sites = frappe.get_all("SaaS Sites", fields=["name"])
     user_sites = []
     for site in all_sites:
@@ -41,15 +46,18 @@ def get_user_sites(email):
             if user.email_id == email:
                 user_sites.append(site.name)
                 break
-    
+
     if email.strip().endswith("@onehash.ai"):
         admin_site = frappe.conf.admin_url
-        conn = FrappeClient("http://"+ admin_site, "Administrator", frappe.conf.administrator_password)
-        user = conn.get_list('User', fields = ['name', 'email'], filters={'email': email})
+        conn = FrappeClient(
+            "http://" + admin_site, "Administrator", frappe.conf.administrator_password
+        )
+        user = conn.get_list("User", fields=["name", "email"], filters={"email": email})
         if user:
             user_sites.append(admin_site)
 
     return {"user_sites": user_sites}
+
 
 def generate_otp():
     digits = "0123456789"
@@ -61,6 +69,7 @@ def generate_otp():
 
 def send_otp_via_sms(otp, number):
     from frappe.core.doctype.sms_settings.sms_settings import send_sms
+
     receiver_list = []
     receiver_list.append(number)
     msg = otp + " is OTP to verify your account request for OneHash."
@@ -136,11 +145,11 @@ def send_otp_via_whatsapp(otp, phone):
     except Exception as e:
         res = frappe.flags.integration_request.json()["error"]
         error_message = res.get("Error", res.get("message"))
-        frappe.throw(msg=error_message, title=res.get(
-            "error_user_title", "Error"))
+        frappe.throw(msg=error_message, title=res.get("error_user_title", "Error"))
 
 
 @frappe.whitelist(allow_guest=True)
+@verify_recaptcha_response
 def send_otp(email, phone, fname, lname, company_name, site_name, url_params):
     doc = frappe.db.get_all(
         "OTP",
@@ -152,8 +161,7 @@ def send_otp(email, phone, fname, lname, company_name, site_name, url_params):
     if (
         len(doc) > 0
         and frappe.utils.time_diff_in_seconds(
-            frappe.utils.now(), doc[0].modified.strftime(
-                "%Y-%m-%d %H:%M:%S.%f")
+            frappe.utils.now(), doc[0].modified.strftime("%Y-%m-%d %H:%M:%S.%f")
         )
         < 10 * 60
     ):
@@ -179,17 +187,16 @@ def send_otp(email, phone, fname, lname, company_name, site_name, url_params):
     try:
         send_otp_via_whatsapp(new_otp_doc.otp, phone)
     except Exception as e:
-        frappe.log_error(message=str(
-            e), title="Failed to send OTP via WhatsApp")
+        frappe.log_error(message=str(e), title="Failed to send OTP via WhatsApp")
 
     new_otp_doc.save(ignore_permissions=True)
-    create_lead(email, phone, fname, lname,
-                company_name, site_name, url_params)
+    create_lead(email, phone, fname, lname, company_name, site_name, url_params)
     frappe.db.commit()
     return unique_id
 
 
 @frappe.whitelist(allow_guest=True)
+@verify_guest_id
 def verify_account_request(unique_id, otp):
     doc = frappe.db.get_all(
         "OTP", filters={"id": unique_id}, fields=["otp", "modified"]
@@ -229,15 +236,14 @@ def create_lead(email, phone, fname, lname, company_name, site_name, url_params)
         params = json.loads(url_params)
     existing_lead = frappe.get_value("Lead", filters={"email_id": email})
     if existing_lead:
-        lead_doc = frappe.get_doc(
-            "Lead", existing_lead, ignore_permissions=True)
+        lead_doc = frappe.get_doc("Lead", existing_lead, ignore_permissions=True)
         lead_doc.site_name = site_name
         lead_doc.site_status = "OTP Sended"
         lead_doc.email_id = email
         lead_doc.mobile_no = phone
         lead_doc.first_name = fname
         lead_doc.last_name = lname
-        lead_doc.lead_name = fname+" "+lname
+        lead_doc.lead_name = fname + " " + lname
         lead_doc.company_name = company_name
         if url_params:
             lead_doc.utm_source = params.get("utm_source", "")
@@ -247,20 +253,22 @@ def create_lead(email, phone, fname, lname, company_name, site_name, url_params)
             lead_doc.utm_term = params.get("utm_term", "")
         lead_doc.save(ignore_permissions=True)
     else:
-        lead = frappe.get_doc({
-            "doctype": "Lead",
-            "email_id": email,
-            "mobile_no": phone,
-            "status": "Lead",
-        })
-        lead.lead_owner = frappe.get_all("User", filters={
-            "name": "Administrator"
-        })[0].get("name")
+        lead = frappe.get_doc(
+            {
+                "doctype": "Lead",
+                "email_id": email,
+                "mobile_no": phone,
+                "status": "Lead",
+            }
+        )
+        lead.lead_owner = frappe.get_all("User", filters={"name": "Administrator"})[
+            0
+        ].get("name")
         lead.site_name = site_name
         lead.site_status = "OTP Sended"
         lead.first_name = fname
         lead.last_name = lname
-        lead.lead_name = fname+" "+lname
+        lead.lead_name = fname + " " + lname
         lead.company_name = company_name
         if url_params:
             lead.utm_source = params.get("utm_source", "")
