@@ -26,7 +26,7 @@
    "unique": 1
   },
   {
-   "description": "List of ip addresses defined using space (and/or comma) separator",
+   "description": "List of ip addresses defined using space (and/or comma, and/or newline) separator",
    "fieldname": "ip_addresses",
    "fieldtype": "Long Text",
    "label": "IP Addresses"
