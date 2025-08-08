@@ -49,3 +49,8 @@ class WhitelistIPs(Document):
                 frappe.throw(f"Invalid IP address: {ip}")
 
         return valid_ips
+
+
+@frappe.whitelist()
+def reignore_ips():
+    f2b.reapply_ignore_ips_from_file()
