@@ -64,3 +64,8 @@ def remove_ignore_ips(ip_list):
     current_ips = get_current_ignore_ips()
     remaining_ips = sorted(set(current_ips) - set(ip_list))
     update_ignoreip_file(remaining_ips)
+
+
+def reapply_ignore_ips_from_file():
+    ip_list = get_current_ignore_ips()
+    set_ignore_ips(ip_list)
