@@ -14,23 +14,22 @@ class WhitelistIPs(Document):
 
     def on_update(self):
         old_doc = self.get_doc_before_save()
+        old_ips = old_doc.parse_ips() if old_doc else []
+        new_ips = self.parse_ips()
 
         if self.disabled:
-            f2b.remove_ignore_ips(self.parse_ips())
+            all_ips = list(set(old_ips) + set(new_ips))
+            f2b.remove_ignore_ips(all_ips)
+        elif old_doc.disabled:
+            f2b.set_ignore_ips(new_ips)
         else:
-            old_ips = old_doc.parse_ips() if old_doc else []
-            new_ips = self.parse_ips()
+            removed_ips = list(set(old_ips) - set(new_ips))
+            added_ips = list(set(new_ips) - set(old_ips))
 
-            if not old_doc.disabled:
-                removed_ips = list(set(old_ips) - set(new_ips))
-                added_ips = list(set(new_ips) - set(old_ips))
-
-                if removed_ips:
-                    f2b.remove_ignore_ips(removed_ips)
-                if added_ips:
-                    f2b.set_ignore_ips(added_ips)
-            else:
-                f2b.set_ignore_ips(new_ips)
+            if removed_ips:
+                f2b.remove_ignore_ips(removed_ips)
+            if added_ips:
+                f2b.set_ignore_ips(added_ips)
 
     def on_trash(self):
         if not self.disabled:
