@@ -18,7 +18,7 @@ class WhitelistIPs(Document):
         new_ips = self.parse_ips()
 
         if self.disabled:
-            all_ips = list(set(old_ips) + set(new_ips))
+            all_ips = list(set(old_ips) | set(new_ips))
             f2b.remove_ignore_ips(all_ips)
         elif old_doc.disabled:
             f2b.set_ignore_ips(new_ips)
