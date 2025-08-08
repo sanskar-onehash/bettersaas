@@ -34,7 +34,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-07 20:13:28.723016",
+ "modified": "2025-08-08 09:53:47.726096",
  "modified_by": "Administrator",
  "module": "Fail2Ban",
  "name": "Whitelist IPs",
@@ -56,5 +56,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1
 }
