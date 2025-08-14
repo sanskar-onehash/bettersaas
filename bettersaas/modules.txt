@@ -1,2 +1,1 @@
 Bettersaas
-Fail2Ban
