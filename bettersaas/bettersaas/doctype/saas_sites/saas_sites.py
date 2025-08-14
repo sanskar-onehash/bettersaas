@@ -610,10 +610,10 @@ class SaaSSites(Document):
         old_ips = old_doc.parse_ips() if old_doc else []
         new_ips = self.parse_ips()
 
-        if self.whitelist_ips:
+        if not self.whitelist_ips:
             all_ips = list(set(old_ips) | set(new_ips))
             f2b.remove_ignore_ips(all_ips)
-        elif old_doc.whitelist_ips:
+        elif not old_doc.whitelist_ips:
             f2b.set_ignore_ips(new_ips)
         else:
             removed_ips = list(set(old_ips) - set(new_ips))
@@ -625,7 +625,7 @@ class SaaSSites(Document):
                 f2b.set_ignore_ips(added_ips)
 
     def on_trash(self):
-        if not self.whitelist_ips:
+        if self.whitelist_ips:
             f2b.remove_ignore_ips(self.parse_ips())
 
     def parse_ips(self, ip_text=None):
