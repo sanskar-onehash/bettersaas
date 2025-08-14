@@ -35,7 +35,10 @@
   "column_break_oxvhq",
   "plan_name",
   "subscription_id",
-  "customer_id"
+  "customer_id",
+  "whitelisted_ips_tab",
+  "whitelist_ips",
+  "ip_addresses"
  ],
  "fields": [
   {
@@ -201,6 +204,24 @@
    "fieldtype": "Data",
    "label": "Status",
    "read_only": 1
+  },
+  {
+   "fieldname": "whitelisted_ips_tab",
+   "fieldtype": "Tab Break",
+   "label": "Whitelisted IPs"
+  },
+  {
+   "default": "0",
+   "fieldname": "whitelist_ips",
+   "fieldtype": "Check",
+   "label": "Whitelist IPs"
+  },
+  {
+   "depends_on": "whitelist_ips",
+   "description": "List of ip addresses defined using space (and/or comma) separator",
+   "fieldname": "ip_addresses",
+   "fieldtype": "Long Text",
+   "label": "IP Addresses"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -210,7 +231,7 @@
    "link_fieldname": "linked_to_site"
   }
  ],
- "modified": "2025-06-13 13:23:12.014532",
+ "modified": "2025-08-14 12:15:06.655845",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Sites",
