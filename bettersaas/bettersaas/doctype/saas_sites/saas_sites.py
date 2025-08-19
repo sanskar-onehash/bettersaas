@@ -6,8 +6,10 @@ import json
 import os
 import boto3
 import requests
-import json
+import ipaddress
+import re
 import subprocess as sp
+import bettersaas.fail2ban as f2b
 from bettersaas.bettersaas.auth import verify_guest_id
 from bettersaas.bettersaas.doctype.saas_users.saas_users import create_user
 from frappe import _
@@ -520,6 +522,11 @@ def get_limits(site_name):
     return {"users": users, "emails": emails, "storage": storage, "plan": plan}
 
 
+@frappe.whitelist()
+def reignore_ips():
+    f2b.reapply_ignore_ips_from_file()
+
+
 class SaaSSites(Document):
     def __init__(self, *args, **kwargs):
         super(SaaSSites, self).__init__(*args, **kwargs)
@@ -598,3 +605,42 @@ class SaaSSites(Document):
         if sid:
             return sid
 
+    def on_update(self):
+        old_doc = self.get_doc_before_save()
+        old_ips = old_doc.parse_ips() if old_doc else []
+        new_ips = self.parse_ips()
+
+        if not self.whitelist_ips:
+            all_ips = list(set(old_ips) | set(new_ips))
+            f2b.remove_ignore_ips(all_ips)
+        elif not old_doc.whitelist_ips:
+            f2b.set_ignore_ips(new_ips)
+        else:
+            removed_ips = list(set(old_ips) - set(new_ips))
+            added_ips = list(set(new_ips) - set(old_ips))
+
+            if removed_ips:
+                f2b.remove_ignore_ips(removed_ips)
+            if added_ips:
+                f2b.set_ignore_ips(added_ips)
+
+    def on_trash(self):
+        if self.whitelist_ips:
+            f2b.remove_ignore_ips(self.parse_ips())
+
+    def parse_ips(self, ip_text=None):
+        ip_text = ip_text or self.ip_addresses or ""
+        raw_ips = re.split(r"[\s,]+", ip_text.strip())
+
+        valid_ips = []
+        for ip in raw_ips:
+            ip = ip.strip()
+            if not ip:
+                continue
+            try:
+                ipaddress.ip_network(ip, strict=False)
+                valid_ips.append(ip)
+            except ValueError:
+                frappe.throw(f"Invalid IP address: {ip}")
+
+        return valid_ips
