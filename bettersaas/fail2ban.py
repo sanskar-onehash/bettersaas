@@ -7,8 +7,8 @@ JAIL_NAME = "nginx-proxy"
 IGNORE_IP_FILE = os.path.join(get_bench_path(), "ignoreips.list")
 
 
-def get_root_password():
-    password = frappe.conf.get("root_password")
+def get_admin_password():
+    password = frappe.conf.get("sudo_password")
     if not password:
         frappe.throw("Root password not found in site configuration.")
     return password
@@ -40,7 +40,7 @@ def set_ignore_ips(ip_list):
 
     for ip in ip_list:
         try:
-            cmd = f"echo {get_root_password()} | sudo -S fail2ban-client set {JAIL_NAME} addignoreip {ip}"
+            cmd = f"echo {get_admin_password()} | sudo -S fail2ban-client set {JAIL_NAME} addignoreip {ip}"
             subprocess.call(cmd, shell=True)
         except Exception as e:
             frappe.log_error("Error occurred while addignoreip", e)
@@ -56,7 +56,7 @@ def remove_ignore_ips(ip_list):
 
     for ip in ip_list:
         try:
-            cmd = f"echo {get_root_password()} | sudo -S fail2ban-client set {JAIL_NAME} delignoreip {ip}"
+            cmd = f"echo {get_admin_password()} | sudo -S fail2ban-client set {JAIL_NAME} delignoreip {ip}"
             subprocess.call(cmd, shell=True)
         except Exception as e:
             frappe.log_error("Error occurred while delignoreip", e)
