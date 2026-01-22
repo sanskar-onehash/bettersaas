@@ -32,11 +32,17 @@
    "fieldname": "description",
    "fieldtype": "Data",
    "label": "Description"
-  }
+  },
+  {
+    "fieldname": "connection_url",
+    "fieldtype": "Data",
+    "label": "Connection Url",
+    "options": "URL"
+	}
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-29 15:54:59.593983",
+ "modified": "2026-01-22 10:11:59.593983",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "Available Apps",
