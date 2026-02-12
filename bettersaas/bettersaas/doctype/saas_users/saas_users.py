@@ -6,11 +6,12 @@ import math
 import random
 import json
 import requests
-from frappe import _
 from frappe.frappeclient import FrappeClient
 from frappe.model.document import Document
 
+from bettersaas.bettersaas.utils import validate_name, validate_email_address, validate_phone_number
 from bettersaas.bettersaas.auth import verify_guest_id, verify_recaptcha_response
+from bettersaas.contexts.user_context import get_user_context
 
 
 def get_stock_sites():
@@ -151,6 +152,12 @@ def send_otp_via_whatsapp(otp, phone):
 @frappe.whitelist(allow_guest=True)
 @verify_recaptcha_response
 def send_otp(email, phone, fname, lname, company_name, site_name, url_params):
+    fname = validate_name(fname, name_label="First Name")
+    lname = validate_name(lname, name_label="Last Name")
+    company_name = validate_name(company_name, name_label="Company Name")
+    email = validate_email_address(email)
+    validate_phone_number(phone, "Phone")
+
     doc = frappe.db.get_all(
         "OTP",
         filters={"email": email},
@@ -190,7 +197,10 @@ def send_otp(email, phone, fname, lname, company_name, site_name, url_params):
         frappe.log_error(message=str(e), title="Failed to send OTP via WhatsApp")
 
     new_otp_doc.save(ignore_permissions=True)
-    create_lead(email, phone, fname, lname, company_name, site_name, url_params)
+
+    with get_user_context("Administrator"):
+        create_lead(email, phone, fname, lname, company_name, site_name, url_params)
+
     frappe.db.commit()
     return unique_id
 
@@ -225,7 +235,7 @@ def create_user(first_name, last_name, email, site, phone):
     user.last_name = last_name
     user.linked_to_site = site
     user.phone = phone
-    user.save(ignore_permissions=True)
+    user.save()
     frappe.db.commit()
     return user
 
@@ -236,7 +246,7 @@ def create_lead(email, phone, fname, lname, company_name, site_name, url_params)
         params = json.loads(url_params)
     existing_lead = frappe.get_value("Lead", filters={"email_id": email})
     if existing_lead:
-        lead_doc = frappe.get_doc("Lead", existing_lead, ignore_permissions=True)
+        lead_doc = frappe.get_doc("Lead", existing_lead)
         lead_doc.site_name = site_name
         lead_doc.site_status = "OTP Sended"
         lead_doc.email_id = email
@@ -251,7 +261,7 @@ def create_lead(email, phone, fname, lname, company_name, site_name, url_params)
             lead_doc.utm_campaign = params.get("utm_campaign", "")
             lead_doc.utm_content = params.get("utm_content", "")
             lead_doc.utm_term = params.get("utm_term", "")
-        lead_doc.save(ignore_permissions=True)
+        lead_doc.save()
     else:
         lead = frappe.get_doc(
             {
@@ -276,7 +286,7 @@ def create_lead(email, phone, fname, lname, company_name, site_name, url_params)
             lead.utm_campaign = params.get("utm_campaign", "")
             lead.utm_content = params.get("utm_content", "")
             lead.utm_term = params.get("utm_term", "")
-        lead.save(ignore_permissions=True)
+        lead.save()
 
 
 class SaaSUsers(Document):

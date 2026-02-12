@@ -9,13 +9,13 @@ import requests
 import ipaddress
 import re
 import subprocess as sp
+from bettersaas.contexts.user_context import get_user_context
 import bettersaas.fail2ban as f2b
+from bettersaas.bettersaas import utils
 from bettersaas.bettersaas.auth import verify_guest_id
 from bettersaas.bettersaas.doctype.saas_users.saas_users import create_user
-from frappe import _
-from frappe.utils import get_bench_path
+from frappe import utils as frappe_utils
 from frappe.core.doctype.user.user import test_password_strength
-from frappe.utils import validate_email_address
 from frappe.utils.password import decrypt, encrypt
 from frappe.model.document import Document
 
@@ -197,23 +197,31 @@ def execute_commands(commands):
 
 
 @frappe.whitelist(allow_guest=True)
-def check_subdomain():
-    restricted_subdomains = frappe.get_doc("SaaS Settings").restricted_subdomains.split(
-        "\n"
-    )
-    site = frappe.get_all(
-        "SaaS Sites",
-        filters={
-            "site_name": frappe.form_dict.get("subdomain") + "." + frappe.conf.domain
-        },
-    )
-    if len(site) > 0:
-        return {"status": "failed"}
-    subdomain = frappe.form_dict.get("subdomain")
-    if subdomain in restricted_subdomains:
-        return {"status": "failed"}
-    else:
+def check_subdomain(subdomain: str | None = None):
+    subdomain = subdomain or frappe.form_dict.get("subdomain")
+    valid = bool(subdomain and subdomain.strip())
+
+    if valid:
+        restricted_subdomains = frappe.get_doc(
+            "SaaS Settings"
+        ).restricted_subdomains.split("\n")
+        valid = subdomain not in restricted_subdomains
+
+    if valid:
+        site_count = frappe.db.count(
+            "SaaS Sites",
+            filters={"site_name": subdomain + "." + frappe.conf.domain},
+        )
+        if site_count > 0:
+            valid = False
+
+    if valid:
+        valid = frappe_utils.validate_name(subdomain)
+
+    if valid:
         return {"status": "success"}
+    else:
+        return {"status": "failed"}
 
 
 @frappe.whitelist(allow_guest=True)
@@ -236,27 +244,37 @@ def check_password_strength(*args, **kwargs):
 @frappe.whitelist(allow_guest=True)
 @verify_guest_id
 def setup_site(*args, **kwargs):
-    company_name = kwargs["company_name"]
-    subdomain = kwargs["subdomain"]
-    admin_password = kwargs["password"]
-    fname = kwargs["first_name"]
-    lname = kwargs["last_name"]
-    email = kwargs["email"]
-    phone = kwargs["phone"]
-    allow_creating_users = kwargs["allow_creating_users"]
+    try:
+        company_name = utils.validate_name(
+            kwargs.get("company_name"), name_label="Company Name"
+        )
+        fname = utils.validate_name(kwargs.get("first_name"), name_label="First Name")
+        lname = utils.validate_name(kwargs.get("last_name"), name_label="Last Name")
+        email = utils.validate_email_address(kwargs.get("email"))
+    except Exception as e:
+        return str(e)
+
+    subdomain = frappe_utils.strip(kwargs.get("subdomain", ""))
+    admin_password = kwargs.get("password")
+    phone = frappe_utils.strip(kwargs.get("phone", ""))
+    allow_creating_users = kwargs.get("allow_creating_users")
+
     saas_settings = frappe.get_doc("SaaS Settings")
+
     if not subdomain:
         return "SUBDOMAIN_NOT_PROVIDED"
+    if check_subdomain(subdomain).get("status") == "failed":
+        return "INVALID_SUBDOMAIN"
+
+    if not phone:
+        return "PHONE_NOT_PROVIDED"
+    try:
+        utils.validate_phone_number(phone, "Phone")
+    except Exception:
+        return "INVALID_PHONE"
+
     if not admin_password:
         return "ADMIN_PASSWORD_NOT_PROVIDED"
-    if not fname:
-        return "FIRST_NAME_NOT_PROVIDED"
-    if not lname:
-        return "LAST_NAME_NOT_PROVIDED"
-    if validate_email_address(email) == "":
-        return "EMAIL_NOT_PROVIDED"
-    if not company_name:
-        return "COMPANY_NAME_NOT_PROVIDED"
     password_check_result = check_password_strength(
         password=admin_password, first_name=fname, last_name=lname, email=email
     )
@@ -271,13 +289,14 @@ def setup_site(*args, **kwargs):
     new_site = subdomain + "." + frappe.conf.domain
     saas_user = None
     if allow_creating_users:
-        saas_user = create_user(
-            first_name=fname,
-            last_name=lname,
-            email=email,
-            site=subdomain + "." + frappe.conf.domain,
-            phone=phone,
-        )
+        with get_user_context("Administrator"):
+            saas_user = create_user(
+                first_name=fname,
+                last_name=lname,
+                email=email,
+                site=subdomain + "." + frappe.conf.domain,
+                phone=phone,
+            )
 
     stock_sites = frappe.db.get_list(
         "SaaS Stock Sites", filters={"is_used": "no"}, ignore_permissions=True
@@ -316,7 +335,7 @@ def setup_site(*args, **kwargs):
             new_site, target_site.subdomain + "." + frappe.conf.domain
         )
     )
-    sites_path = os.path.join(get_bench_path(), "sites")
+    sites_path = os.path.join(frappe_utils.get_bench_path(), "sites")
     commands.append(
         "cd {} & mv {}.{} {}".format(
             sites_path, target_site.subdomain, frappe.conf.domain, new_site
@@ -355,7 +374,7 @@ def setup_site(*args, **kwargs):
     )
     commands.append(
         "bench --site {} set-config created_on {}".format(
-            new_site, frappe.utils.nowdate()
+            new_site, frappe_utils.nowdate()
         )
     )
     commands.append(
@@ -434,7 +453,7 @@ def get_decrypted_password(*args, **kwargs):
 def insert_backup_record(site, backup_path, backup_size, encrypt_backup, frequency):
     try:
         doc = frappe.new_doc("SaaS Sites Backup")
-        doc.created_on = frappe.utils.now()
+        doc.created_on = frappe_utils.now()
         doc.frequency = frequency
         doc.site = site
         doc.path = backup_path
@@ -473,7 +492,7 @@ def get_site_backup_size(site_name):
 
 
 def execute_command_async(command):
-    frappe.utils.execute_in_shell(command)
+    frappe_utils.execute_in_shell(command)
 
 
 @frappe.whitelist()
@@ -532,7 +551,9 @@ class SaaSSites(Document):
         super(SaaSSites, self).__init__(*args, **kwargs)
         self.site_config = {}
         if hasattr(self, "site_name") and self.site_name:
-            site_path = os.path.join(get_bench_path(), "sites", self.site_name)
+            site_path = os.path.join(
+                frappe_utils.get_bench_path(), "sites", self.site_name
+            )
             config_file = os.path.join(site_path, "site_config.json")
 
             if os.path.exists(config_file):
