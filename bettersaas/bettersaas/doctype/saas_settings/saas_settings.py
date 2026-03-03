@@ -4,6 +4,7 @@
 import os
 import frappe
 import shutil
+import traceback
 from datetime import datetime, timedelta
 from frappe import _
 from frappe.utils.password import decrypt
@@ -140,8 +141,10 @@ def delete_free_sites():
                     site_name=site.site_name,
                 )
                 send_email(linked_email, content)
-        except Exception as e:
-            failed_to_delete.append({"site": site.site_name, "error": e})
+        except Exception:
+            failed_to_delete.append(
+                {"site": site.site_name, "error": traceback.format_exc()}
+            )
 
     if failed_to_delete:
         frappe.log_error("Failed to delete sites", failed_to_delete)
