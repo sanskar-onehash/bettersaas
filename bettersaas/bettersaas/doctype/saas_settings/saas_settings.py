@@ -70,7 +70,7 @@ def get_last_login_date(site_name):
     active_users_last_active = conn.get_list(
         "User",
         fields=["last_active"],
-        filters={"enabled": "1"},
+        filters={"enabled": "1", "name": ["!=", "Administrator"]},
         limit_page_length=10000,
     )
     latest_last_active = max(
