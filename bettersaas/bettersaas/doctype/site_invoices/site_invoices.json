@@ -1,0 +1,52 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-03-13 09:59:07.779841",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "invoice_id",
+  "status",
+  "due_date",
+  "paid_on"
+ ],
+ "fields": [
+  {
+   "fieldname": "invoice_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Invoice Id"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Status"
+  },
+  {
+   "fieldname": "due_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Due Date"
+  },
+  {
+   "fieldname": "paid_on",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Paid On"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-03-13 10:07:07.130678",
+ "modified_by": "Administrator",
+ "module": "Bettersaas",
+ "name": "Site Invoices",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -36,6 +36,8 @@
   "plan_name",
   "subscription_id",
   "customer_id",
+  "section_break_ejpf",
+  "invoices",
   "whitelisted_ips_tab",
   "whitelist_ips",
   "ip_addresses"
@@ -222,6 +224,17 @@
    "fieldname": "ip_addresses",
    "fieldtype": "Long Text",
    "label": "IP Addresses"
+  },
+  {
+   "fieldname": "section_break_ejpf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "invoices",
+   "fieldtype": "Table",
+   "label": "Invoices",
+   "options": "Site Invoices",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -231,7 +244,7 @@
    "link_fieldname": "linked_to_site"
   }
  ],
- "modified": "2025-08-14 12:15:06.655845",
+ "modified": "2026-03-13 12:19:42.480157",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Sites",
