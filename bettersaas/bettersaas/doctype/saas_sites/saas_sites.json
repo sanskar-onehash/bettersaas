@@ -31,6 +31,7 @@
   "subscription_tab",
   "subscription_starts_on",
   "subscription_ends_on",
+  "invoice_due_date",
   "subscription_status",
   "column_break_oxvhq",
   "plan_name",
@@ -235,6 +236,12 @@
    "label": "Invoices",
    "options": "Site Invoices",
    "read_only": 1
+  },
+  {
+   "fieldname": "invoice_due_date",
+   "fieldtype": "Date",
+   "is_virtual": 1,
+   "label": "Invoice Due Date"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -244,7 +251,7 @@
    "link_fieldname": "linked_to_site"
   }
  ],
- "modified": "2026-03-13 12:19:42.480157",
+ "modified": "2026-03-13 12:44:15.079730",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Sites",
