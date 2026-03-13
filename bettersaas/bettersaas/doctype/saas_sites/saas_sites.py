@@ -527,6 +527,13 @@ def reignore_ips():
     f2b.reapply_ignore_ips_from_file()
 
 
+def update_invoice_due(site_name, due_date):
+    commands = [
+        "bench --site {} set-config invoice_due_date {}".format(site_name, due_date)
+    ]
+    execute_commands(commands)
+
+
 class SaaSSites(Document):
     def __init__(self, *args, **kwargs):
         super(SaaSSites, self).__init__(*args, **kwargs)
@@ -561,6 +568,10 @@ class SaaSSites(Document):
         return frappe.get_site_config(site_path=self.site_name).get(
             "subscription_ends_on"
         )
+
+    @property
+    def invoice_due_date(self):
+        return frappe.get_site_config(site_path=self.site_name).get("invoice_due_date")
 
     @property
     def customer_id(self):
@@ -605,7 +616,7 @@ class SaaSSites(Document):
         if sid:
             return sid
 
-    def on_update(self):
+    def update_ips(self):
         old_doc = self.get_doc_before_save()
         old_ips = old_doc.parse_ips() if old_doc else []
         new_ips = self.parse_ips()
@@ -623,6 +634,21 @@ class SaaSSites(Document):
                 f2b.remove_ignore_ips(removed_ips)
             if added_ips:
                 f2b.set_ignore_ips(added_ips)
+
+    def update_invoice_due(self):
+        due_date = None
+        for invoice in self.invoices:
+            if invoice.due_date and invoice.status in {"open", "uncollectible"}:
+                if not due_date:
+                    due_date = invoice.due_date
+                elif invoice.due_date < due_date:
+                    due_date = invoice.due_date
+
+        update_invoice_due(self.site_name, due_date)
+
+    def on_update(self):
+        self.update_ips()
+        self.update_invoice_due()
 
     def on_trash(self):
         if self.whitelist_ips:
