@@ -129,6 +129,8 @@ def process_invoice_update(data):
         return
 
     customer_id = data["customer"]
+    if isinstance(customer_id, dict):
+        customer_id = customer_id["id"]
     metadata = data.get("metadata", {})
 
     site_name = metadata.get("site_name", "")
@@ -160,5 +162,5 @@ def process_invoice_update(data):
         if not invoice_found:
             site_doc.append("invoices", invoice_doc_data, 0)
 
-        site_doc.save()
+        site_doc.save(ignore_permissions=True)
         frappe.db.commit()
