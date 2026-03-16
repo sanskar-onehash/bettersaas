@@ -4,10 +4,12 @@
 import os
 import frappe
 import shutil
+import traceback
 from datetime import datetime, timedelta
 from frappe import _
 from frappe.utils.password import decrypt
 from frappe.model.document import Document
+
 
 def get_days_since_creation(folder_path):
     try:
@@ -17,12 +19,13 @@ def get_days_since_creation(folder_path):
         return days_since_creation
     except Exception as e:
         return f"An error occurred: {e}"
-    
+
+
 @frappe.whitelist()
 def delete_archived_sites():
     from frappe.utils import get_bench_path
 
-    conf = frappe.get_doc('SaaS Settings')
+    conf = frappe.get_doc("SaaS Settings")
     if not conf.arch_site_delete_conf_enabled:
         return
     directory_path = os.path.join(get_bench_path(), "archived", "sites")
@@ -32,10 +35,14 @@ def delete_archived_sites():
             folder_path = os.path.join(directory_path, folder_name)
             if os.path.isdir(folder_path):
                 days_since_creation = get_days_since_creation(folder_path)
-                if isinstance(days_since_creation, int) and days_since_creation > threshold_days:
-                      shutil.rmtree(folder_path)
+                if (
+                    isinstance(days_since_creation, int)
+                    and days_since_creation > threshold_days
+                ):
+                    shutil.rmtree(folder_path)
     except Exception as e:
         frappe.msgprint(f"An error occurred: {e}")
+
 
 def send_email(
     email,
@@ -43,9 +50,7 @@ def send_email(
 ):
     subject = "Account Status"
     template = "account_status_email"
-    args = {
-        "content": content
-    }
+    args = {"content": content}
     frappe.sendmail(
         recipients=email,
         subject=subject,
@@ -55,24 +60,38 @@ def send_email(
     )
     return True
 
+
 def get_last_login_date(site_name):
     from frappe.frappeclient import FrappeClient
+
     site = frappe.db.get("SaaS Sites", filters={"site_name": site_name})
     site_password = decrypt(site.encrypted_password, frappe.conf.encryption_key)
-    conn = FrappeClient("http://"+site_name, "Administrator", site_password)
-    active_users_last_active = conn.get_list('User', fields = ['last_active'], filters = {'enabled':'1'},limit_page_length=10000)
+    conn = FrappeClient("http://" + site_name, "Administrator", site_password)
+    active_users_last_active = conn.get_list(
+        "User",
+        fields=["last_active"],
+        filters={"enabled": "1", "name": ["!=", "Administrator"]},
+        limit_page_length=10000,
+    )
     latest_last_active = max(
-        (datetime.fromisoformat(user['last_active']) for user in active_users_last_active if user['last_active']),
-        default=None
+        (
+            datetime.fromisoformat(user["last_active"])
+            for user in active_users_last_active
+            if user["last_active"]
+        ),
+        default=None,
     )
     return latest_last_active
-     
+
+
 @frappe.whitelist()
 def delete_free_sites():
     saas_settings = frappe.get_doc("SaaS Settings")
     if not saas_settings.site_delete_conf_enabled:
         return
-    sites = frappe.get_list("SaaS Sites", fields=["site_name"])
+    sites = frappe.get_list(
+        "SaaS Sites", fields=["site_name"], filters={"status": "Active"}
+    )
     to_be_deleted = []
     for site in sites:
         try:
@@ -81,37 +100,56 @@ def delete_free_sites():
                 to_be_deleted.append(site)
         except:
             pass
+    failed_to_delete = []
     for site in to_be_deleted:
-        site_config = frappe.get_site_config(site_path=site.site_name)
-        linked_email = site_config.customer_email
+        try:
+            site_config = frappe.get_site_config(site_path=site.site_name)
+            linked_email = site_config.customer_email
 
-        last_login_date = get_last_login_date(site.site_name)
-        present_date = datetime.now()
-        inactive_days = (present_date - last_login_date).days
-        days_until_deletion = saas_settings.inactive_for_days - inactive_days
-        exp_date = present_date + timedelta(days=days_until_deletion)
-        if inactive_days >= saas_settings.inactive_for_days:
-            content = "This is to notify you that on {exp_date}, your OneHash account {site_name} with email address {email_address} been permanently terminated. You won't be able to retrieve any data or access your account any more.".format(
-				email_address=linked_email, exp_date=exp_date.strftime("%d-%m-%y"), site_name = site.site_name
-			)
-            send_email(linked_email, content)
-            method = "bettersaas.api.delete_site"
-            frappe.enqueue(
-                method, 
-                queue="short", 
-                site_name=site.site_name
+            last_login_date = get_last_login_date(site.site_name)
+            present_date = datetime.now()
+            inactive_days = (present_date - last_login_date).days
+            days_until_deletion = saas_settings.inactive_for_days - inactive_days
+            exp_date = present_date + timedelta(days=days_until_deletion)
+            if inactive_days >= saas_settings.inactive_for_days:
+                content = "This is to notify you that on {exp_date}, your OneHash account {site_name} with email address {email_address} been permanently terminated. You won't be able to retrieve any data or access your account any more.".format(
+                    email_address=linked_email,
+                    exp_date=exp_date.strftime("%d-%m-%y"),
+                    site_name=site.site_name,
+                )
+                send_email(linked_email, content)
+                method = "bettersaas.api.delete_site"
+                frappe.enqueue(method, queue="short", site_name=site.site_name)
+            elif (
+                inactive_days
+                >= saas_settings.inactive_for_days - saas_settings.warning_days
+            ):
+                content = "This is to let you know that on {exp_date}, your OneHash account {site_name} with email address {email_address} will be permanently removed. You will no longer be able to retrieve any data or access your account".format(
+                    email_address=linked_email,
+                    exp_date=exp_date.strftime("%d-%m-%y"),
+                    site_name=site.site_name,
+                )
+                send_email(linked_email, content)
+            elif (
+                inactive_days
+                >= saas_settings.inactive_for_days
+                - saas_settings.intermittent_warning_days
+            ):
+                content = "This is to let you know that on {exp_date}, your OneHash account {site_name} with email address {email_address} will be permanently removed. You will no longer be able to retrieve any data or access your account.".format(
+                    email_address=linked_email,
+                    exp_date=exp_date.strftime("%d-%m-%y"),
+                    site_name=site.site_name,
+                )
+                send_email(linked_email, content)
+        except Exception:
+            failed_to_delete.append(
+                {"site": site.site_name, "error": traceback.format_exc()}
             )
-        elif inactive_days >= saas_settings.inactive_for_days - saas_settings.warning_days:
-            content = "This is to let you know that on {exp_date}, your OneHash account {site_name} with email address {email_address} will be permanently removed. You will no longer be able to retrieve any data or access your account".format(
-				email_address=linked_email, exp_date=exp_date.strftime("%d-%m-%y"), site_name = site.site_name
-			)
-            send_email(linked_email, content)
-        elif inactive_days >= saas_settings.inactive_for_days - saas_settings.intermittent_warning_days:
-            content = "This is to let you know that on {exp_date}, your OneHash account {site_name} with email address {email_address} will be permanently removed. You will no longer be able to retrieve any data or access your account.".format(
-				email_address=linked_email, exp_date=exp_date.strftime("%d-%m-%y"), site_name = site.site_name
-		  	)
-            send_email(linked_email, content)
+
+    if failed_to_delete:
+        frappe.log_error("Failed to delete sites", failed_to_delete)
     return "success"
+
 
 @frappe.whitelist()
 def update_refresh_stock_site_scheduler(check_every):
@@ -121,11 +159,13 @@ def update_refresh_stock_site_scheduler(check_every):
     minutes = remaining_seconds // 60
 
     if check_every < 60:
-        frappe.throw(f"Invalid check_every value: {check_every}. Must be at least 60 seconds.")
+        frappe.throw(
+            f"Invalid check_every value: {check_every}. Must be at least 60 seconds."
+        )
 
     if minutes == 0 and hours != 0:
         cron_expression = f"0 */{hours} * * *"
-    
+
     elif hours == 0 and minutes != 0:
         cron_expression = f"*/{minutes} * * * *"
 
@@ -135,6 +175,7 @@ def update_refresh_stock_site_scheduler(check_every):
     job = frappe.get_doc("Scheduled Job Type", "saas_stock_sites.refresh_stock_sites")
     job.cron_format = cron_expression
     job.save()
+
 
 @frappe.whitelist(allow_guest=True)
 def get_backup_limit(frequency):
@@ -147,5 +188,6 @@ def get_backup_limit(frequency):
     elif frequency == "Monthly":
         return frappe.get_doc("SaaS Settings").monthly
 
+
 class SaaSSettings(Document):
-	pass
+    pass
