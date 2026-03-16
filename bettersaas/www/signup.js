@@ -58,8 +58,8 @@ class OTPVerificationStatus {
   setWaitingForResend() {
     this.waitingForResend = true;
   }
-  setSendingOTP() {
-    this.sendingOTP = true;
+  setSendingOTP(value = true) {
+    this.sendingOTP = value;
   }
 }
 window.Vue.createApp({
@@ -84,7 +84,9 @@ window.Vue.createApp({
       otpSent: false,
       country: "",
       userIp: null,
+      formError: "",
       recaptchaSiteKey: config.RECAPTCHA_SITE_KEY,
+      recaptchaToken: null,
       status: {
         step1: "neutral",
         step2: "neutral",
@@ -185,6 +187,17 @@ window.Vue.createApp({
       }
       this.otpVerificationStatus.reset();
     },
+    isName(value) {
+      if (!value) {
+        return config.ERROR_MESSAGES.REQUIRED;
+      }
+
+      if (!value.match(config.PATTERNS.PERSON_NAME_PATTHERN)) {
+        return config.ERROR_MESSAGES.INVALID_NAME;
+      }
+
+      return true;
+    },
     isRequired(value) {
       if (value && value.length > 0) {
         return true;
@@ -210,11 +223,23 @@ window.Vue.createApp({
       return config.ERROR_MESSAGES.INVALID_PHONE;
     },
 
-    async onSubmit(userRecaptchaToken) {
+    async onSubmit() {
+      this.formError = null;
       this.country = document.getElementById("country").value;
       this.phone = this.phoneInput.getNumber();
       this.otpVerificationStatus.setSendingOTP();
-      this.sendOtp(userRecaptchaToken);
+      try {
+        await this.sendOtp();
+      } catch (err) {
+        this.otpVerificationStatus.setSendingOTP(false);
+        this.resetRecaptcha();
+        this.formError = err.toString().replace("Error: ", "");
+      }
+    },
+
+    resetRecaptcha() {
+      grecaptcha.reset();
+      this.recaptchaToken = null;
     },
 
     async checkSubdomain(sitename) {
@@ -312,7 +337,7 @@ window.Vue.createApp({
         }, config.SITE_CREATION_POLL_TIME);
       }
     },
-    async sendOtp(userRecaptchaToken) {
+    async sendOtp() {
       if (!this.isEmailRegex(this.email)) {
         return;
       }
@@ -324,29 +349,43 @@ window.Vue.createApp({
       // frappe.show_alert("Please check your email or phone for the OTP", 5);
       // send otp and set otpSent to true;
       let message;
-      const resp = await $.ajax({
-        url: config.HTTP_METHODS.SEND_OTP.ENDPOINT,
-        type: config.HTTP_METHODS.SEND_OTP.METHOD,
-        data: {
-          [config.HTTP_METHODS.SEND_OTP.DATA.EMAIl]: this.email,
-          [config.HTTP_METHODS.SEND_OTP.DATA.PHONE]: t_phone.replace("+", ""),
-          [config.HTTP_METHODS.SEND_OTP.DATA.FNAME]: this.fname,
-          [config.HTTP_METHODS.SEND_OTP.DATA.LNAME]: this.lname,
-          [config.HTTP_METHODS.SEND_OTP.DATA.CNAME]: this.company_name,
-          [config.HTTP_METHODS.SEND_OTP.DATA.SITE_NAME]: this.sitename,
-          [config.HTTP_METHODS.SEND_OTP.DATA.URL_PARAMS]: JSON.stringify(
-            Object.fromEntries(new URLSearchParams(window.location.search)),
-          ),
-          [config.HTTP_METHODS.SEND_OTP.DATA.USER_RECAPTCHA_TOKEN]:
-            userRecaptchaToken,
-          [config.HTTP_METHODS.SEND_OTP.DATA.USER_IP]: this.userIp,
-        },
-      });
-      message = resp.message;
-      this.otpUniqueId = message;
-      this.otpVerificationStatus.setOTPSent();
-      this.otpTimer(config.OTP_RESEND_TIME_SECONDS);
-      this.otpVerificationStatus.sendingOTP = false;
+      try {
+        const resp = await $.ajax({
+          url: config.HTTP_METHODS.SEND_OTP.ENDPOINT,
+          type: config.HTTP_METHODS.SEND_OTP.METHOD,
+          data: {
+            [config.HTTP_METHODS.SEND_OTP.DATA.EMAIl]: this.email,
+            [config.HTTP_METHODS.SEND_OTP.DATA.PHONE]: t_phone.replace("+", ""),
+            [config.HTTP_METHODS.SEND_OTP.DATA.FNAME]: this.fname,
+            [config.HTTP_METHODS.SEND_OTP.DATA.LNAME]: this.lname,
+            [config.HTTP_METHODS.SEND_OTP.DATA.CNAME]: this.company_name,
+            [config.HTTP_METHODS.SEND_OTP.DATA.SITE_NAME]: this.sitename,
+            [config.HTTP_METHODS.SEND_OTP.DATA.URL_PARAMS]: JSON.stringify(
+              Object.fromEntries(new URLSearchParams(window.location.search)),
+            ),
+            [config.HTTP_METHODS.SEND_OTP.DATA.USER_RECAPTCHA_TOKEN]:
+              this.recaptchaToken,
+            [config.HTTP_METHODS.SEND_OTP.DATA.USER_IP]: this.userIp,
+          },
+        });
+        message = resp.message;
+        this.otpUniqueId = message;
+        this.otpVerificationStatus.setOTPSent();
+        this.otpTimer(config.OTP_RESEND_TIME_SECONDS);
+        this.otpVerificationStatus.sendingOTP = false;
+      } catch (err) {
+        const serverMessages = JSON.parse(
+          err.responseJSON?._server_messages || "[]",
+        );
+        let errorMessage = "Unexpected Error occured.";
+
+        if (serverMessages && serverMessages.length) {
+          const serverMessage = JSON.parse(serverMessages[0]);
+          errorMessage = serverMessage.message;
+        }
+
+        throw new Error("Error occured in submission: " + errorMessage);
+      }
     },
     async verifyOTP() {
       const otp = this.otp;
@@ -427,10 +466,15 @@ window.Vue.createApp({
       });
     },
     handleSubmit() {
-      grecaptcha.execute();
+      if (!this.recaptchaToken) {
+        grecaptcha.execute();
+        return;
+      }
+      this.onSubmit();
     },
     onRecaptchaVerified(userRecaptchaToken) {
-      this.onSubmit(userRecaptchaToken);
+      this.recaptchaToken = userRecaptchaToken;
+      this.handleSubmit();
     },
     isAlNum(event) {
       const char = String.fromCharCode(event.keyCode);
@@ -447,4 +491,3 @@ window.Vue.createApp({
     },
   },
 }).mount("#main");
-

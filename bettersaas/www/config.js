@@ -10,6 +10,9 @@ const config = {
   DOM_ELEMENT_SELECTOR: {
     OTP_FEEDBACK: "otp-feedback",
   },
+  PATTERNS: {
+    PERSON_NAME_PATTHERN: /^[\w][\w\'\-]*( \w[\w\'\-]*)*$/,
+  },
   ERROR_MESSAGES: {
     ACCEPT_TERMS: "Please accept the terms and conditions",
     INVALID_EMAIL: "Please enter a valid email address",
@@ -18,6 +21,7 @@ const config = {
     INVALID_OTP: "Please enter a valid OTP",
     INVALID_FNAME: "Please enter a valid first Name",
     INVALID_LNAME: "Please enter a valid last Name",
+    INVALID_NAME: "Please enter a valid name",
     OTP_EXPIRED: "OTP expired",
     REQUIRED: "This field is required",
     PASSWORD_REQUIRED: "Password cannot be empty",
@@ -75,7 +79,8 @@ const config = {
       SUCCESS_MESSAGE: "SUCCESS",
     },
     CREATE_SITE: {
-      ENDPOINT: "bettersaas.bettersaas.doctype.saas_sites.saas_sites.setup_site",
+      ENDPOINT:
+        "bettersaas.bettersaas.doctype.saas_sites.saas_sites.setup_site",
     },
   },
 };

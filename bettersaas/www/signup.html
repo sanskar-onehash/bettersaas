@@ -261,7 +261,7 @@
                 <v-field 
                   v-slot="{ field, errorMessage }" 
                   :validateOnInput="true" 
-                  :rules="isRequired" 
+                  :rules="isName" 
                   name="first_name"
                   v-model="fname"
                 >
@@ -285,7 +285,7 @@
                 <v-field 
                   v-slot="{ field, errorMessage }" 
                   :validateOnInput="true" 
-                  :rules="isRequired" 
+                  :rules="isName" 
                   name="last_name"
                   v-model="lname"
                 >
@@ -310,7 +310,7 @@
                 <v-field 
                   v-slot="{ field, errorMessage }" 
                   :validateOnInput="true" 
-                  :rules="isRequired" 
+                  :rules="isName" 
                   name="company_name"
                   v-model="company_name"
                 >
@@ -490,6 +490,12 @@
                 <span id="otp-feedback" class="feedback"> </span>
               </div>
             </div>
+
+						<div class="mt-6 mb-3 text-sm">
+							<div v-if="formError" class="text-red-500">
+								{{ formError }}
+							</div>
+						</div>
 
             <button
               :disabled="otpVerificationStatus.sendingOTP || otpVerificationStatus.otpSent || otpVerificationStatus.waitingForResend || otpVerificationStatus.otpVerified"
