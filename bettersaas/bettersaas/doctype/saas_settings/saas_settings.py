@@ -96,7 +96,19 @@ def delete_free_sites():
     for site in sites:
         try:
             site_config = frappe.get_site_config(site_path=site.site_name)
-            if site_config["subscription_status"] != "active":
+            expiry_date = frappe.utils.getdate(
+                site_config.get("invoice_due_date")
+                or site_config.get("subscription_ends_on")
+            )
+
+            if site_config.get("subscription_status") == "active":
+                pass
+            elif (
+                site_config.get("subscription_status") == "trialing"
+                and expiry_date > frappe.utils.getdate()
+            ):
+                pass
+            else:
                 to_be_deleted.append(site)
         except:
             pass
