@@ -171,12 +171,14 @@ def process_invoice_update(data):
         status = data["status"]
         due_date = get_date_from_timestamp(data["due_date"])
         paid_at = get_date_from_timestamp(data["status_transitions"]["paid_at"])
+        payment_url = data.get("hosted_invoice_url")
 
         invoice_doc_data = {
             "invoice_id": invoice_id,
             "status": status,
             "due_date": due_date,
             "paid_on": paid_at,
+            "payment_page_url": payment_url,
         }
 
         invoice_found = False

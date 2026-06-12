@@ -9,6 +9,7 @@ import requests
 import ipaddress
 import re
 import subprocess as sp
+from markupsafe import Markup, escape
 from bettersaas.contexts.user_context import get_user_context
 import bettersaas.fail2ban as f2b
 from bettersaas.bettersaas import utils
@@ -703,6 +704,14 @@ class SaaSSites(Document):
     def on_update(self):
         self.update_ips()
         self.update_invoice_due()
+        try:
+            self.notify_invoice_update()
+        except Exception:
+            frappe.log_error(
+                "Failed to notify customer about invoice update",
+                frappe.get_traceback(),
+            )
+            frappe.msgprint("Failed to notify customer about invoice update.")
 
     def on_trash(self):
         if self.whitelist_ips:
@@ -724,3 +733,50 @@ class SaaSSites(Document):
                 frappe.throw(f"Invalid IP address: {ip}")
 
         return valid_ips
+
+    def notify_invoice_update(self):
+        if len(self.invoices):
+            invoice_doc = self.invoices[0]
+
+            if (
+                invoice_doc.status == "uncollectible"
+                and not invoice_doc.uncollectible_notified
+                and frappe.db.get_single_value(
+                    "SaaS Settings", "notify_uncollectible_invoice"
+                )
+            ):
+                payment_page_url = invoice_doc.payment_page_url
+                payment_link = (
+                    '<a href="{0}" style="color: #000;">{0}</a>'.format(
+                        escape(payment_page_url)
+                    )
+                    if payment_page_url
+                    else ""
+                )
+                payment_sentence = (
+                    "Please complete your payment using this link: {payment_link}."
+                    "<br /><br />"
+                    if payment_link
+                    else ""
+                )
+                content = Markup(
+                    "We were unable to collect payment for your OneHash subscription. "
+                    "Please review your payment method and complete the pending payment "
+                    "to avoid any interruption to your service."
+                    "<br /><br />"
+                    "{payment_sentence}"
+                    "If you have already taken action, please ignore this email."
+                ).format(
+                    payment_sentence=Markup(payment_sentence).format(
+                        payment_link=Markup(payment_link)
+                    )
+                )
+
+                utils.send_account_status_email(self.linked_email, content, subject="")
+                frappe.db.set_value(
+                    invoice_doc.doctype,
+                    invoice_doc.name,
+                    "uncollectible_notified",
+                    1,
+                    update_modified=False,
+                )

@@ -23,6 +23,10 @@
   "monthly",
   "site_expiration_configuration_tab",
   "subscription_expiry_grace_days",
+  "column_break_sexx",
+  "notify_for_site_expiry",
+  "site_expiry_notification_days",
+  "notify_uncollectible_invoice",
   "site_delete_configuration_tab",
   "site_delete_conf_enabled",
   "inactive_for_days",
@@ -184,11 +188,36 @@
    "fieldtype": "Int",
    "label": "Subscription Expiry Grace Days"
   },
+  {
+   "fieldname": "column_break_sexx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "7,1",
+   "depends_on": "notify_for_site_expiry",
+   "description": "Comma-separated number of days before site expiry to send reminders",
+   "fieldname": "site_expiry_notification_days",
+   "fieldtype": "Data",
+   "label": "Site Expiry Notification Days",
+   "mandatory_depends_on": "notify_for_site_expiry"
+  },
+  {
+   "default": "0",
+   "fieldname": "notify_for_site_expiry",
+   "fieldtype": "Check",
+   "label": "Notify for Site Expiry"
+  },
+  {
+   "default": "0",
+   "fieldname": "notify_uncollectible_invoice",
+   "fieldtype": "Check",
+   "label": "Notify Uncollectible Invoice"
+  }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-06-12 11:12:05.711139",
+ "modified": "2026-06-12 12:30:01.464576",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Settings",
