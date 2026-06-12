@@ -75,7 +75,9 @@ def delete_free_sites():
     if not saas_settings.site_delete_conf_enabled:
         return
     sites = frappe.get_list(
-        "SaaS Sites", fields=["site_name"], filters={"status": "Active"}
+        "SaaS Sites",
+        fields=["site_name"],
+        filters={"status": "Active", "is_internal_site": 0},
     )
     to_be_deleted = []
     for site in sites:
@@ -272,7 +274,7 @@ def notify_site_expiration():
     sites = frappe.get_all(
         "SaaS Sites",
         fields=["name", "site_name", "linked_email"],
-        filters={"status": "Active"},
+        filters={"status": "Active", "is_internal_site": 0},
     )
 
     failed_to_notify = []

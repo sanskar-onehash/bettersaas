@@ -10,6 +10,7 @@
  "field_order": [
   "site_name",
   "status",
+  "is_internal_site",
   "saas_user",
   "linked_email",
   "encrypted_password",
@@ -208,6 +209,13 @@
    "fieldtype": "Data",
    "label": "Status",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "description": "Exclude this site from automated expiry enforcement, deletion, and lifecycle notifications.",
+   "fieldname": "is_internal_site",
+   "fieldtype": "Check",
+   "label": "Internal Site"
   },
   {
    "fieldname": "whitelisted_ips_tab",
