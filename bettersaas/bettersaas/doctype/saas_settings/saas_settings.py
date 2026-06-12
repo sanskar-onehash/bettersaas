@@ -9,6 +9,8 @@ from datetime import datetime, timedelta
 from frappe import _
 from frappe.utils.password import decrypt
 from frappe.model.document import Document
+from markupsafe import Markup, escape
+from bettersaas.bettersaas.utils import send_account_status_email
 
 
 def get_days_since_creation(folder_path):
@@ -42,23 +44,6 @@ def delete_archived_sites():
                     shutil.rmtree(folder_path)
     except Exception as e:
         frappe.msgprint(f"An error occurred: {e}")
-
-
-def send_email(
-    email,
-    content,
-):
-    subject = "Account Status"
-    template = "account_status_email"
-    args = {"content": content}
-    frappe.sendmail(
-        recipients=email,
-        subject=subject,
-        template=template,
-        args=args,
-        delayed=False,
-    )
-    return True
 
 
 def get_last_login_date(site_name):
@@ -120,7 +105,9 @@ def delete_free_sites():
 
             last_login_date = get_last_login_date(site.site_name)
             present_date = datetime.now()
-            inactive_days = (present_date - last_login_date).days
+            inactive_days = saas_settings.inactive_for_days
+            if last_login_date is not None:
+                inactive_days = (present_date - last_login_date).days
             days_until_deletion = saas_settings.inactive_for_days - inactive_days
             exp_date = present_date + timedelta(days=days_until_deletion)
             if inactive_days >= saas_settings.inactive_for_days:
@@ -129,7 +116,7 @@ def delete_free_sites():
                     exp_date=exp_date.strftime("%d-%m-%y"),
                     site_name=site.site_name,
                 )
-                send_email(linked_email, content)
+                send_account_status_email(linked_email, content)
                 method = "bettersaas.api.delete_site"
                 frappe.enqueue(method, queue="short", site_name=site.site_name)
             elif (
@@ -141,7 +128,7 @@ def delete_free_sites():
                     exp_date=exp_date.strftime("%d-%m-%y"),
                     site_name=site.site_name,
                 )
-                send_email(linked_email, content)
+                send_account_status_email(linked_email, content)
             elif (
                 inactive_days
                 >= saas_settings.inactive_for_days
@@ -152,7 +139,7 @@ def delete_free_sites():
                     exp_date=exp_date.strftime("%d-%m-%y"),
                     site_name=site.site_name,
                 )
-                send_email(linked_email, content)
+                send_account_status_email(linked_email, content)
         except Exception:
             failed_to_delete.append(
                 {"site": site.site_name, "error": traceback.format_exc()}
@@ -199,6 +186,122 @@ def get_backup_limit(frequency):
         return frappe.get_doc("SaaS Settings").weekly
     elif frequency == "Monthly":
         return frappe.get_doc("SaaS Settings").monthly
+
+
+def parse_site_expiry_notification_days(notification_days):
+    days = set()
+    for value in (notification_days or "").split(","):
+        value = value.strip()
+        if not value:
+            continue
+        try:
+            days.add(int(value))
+        except ValueError:
+            frappe.log_error(
+                "Invalid site expiry notification day",
+                f"Could not parse '{value}' from '{notification_days}'",
+            )
+    return days
+
+
+def get_config_date(site_config, key):
+    value = site_config.get(key)
+    if value and value != "None":
+        return frappe.utils.getdate(value)
+
+
+def get_payment_page_url(site):
+    invoices = [
+        invoice
+        for invoice in site.invoices
+        if invoice.payment_page_url and invoice.status in {"open", "uncollectible"}
+    ]
+    invoices.sort(key=lambda invoice: invoice.due_date or frappe.utils.getdate())
+    if invoices:
+        return invoices[0].payment_page_url
+
+
+def get_site_expiry_reminder_content(expiry_date, payment_page_url=None):
+    payment_sentence = (
+        "Please complete your payment using this link: {payment_link}."
+        "<br /><br />"
+        if payment_page_url
+        else ""
+    )
+    payment_link = (
+        '<a href="{0}" style="color: #000;">{0}</a>'.format(escape(payment_page_url))
+        if payment_page_url
+        else ""
+    )
+
+    return Markup(
+        "This is a reminder that your OneHash account will expire on {expiry_date}."
+        "<br /><br />"
+        "Please renew your subscription before this date to continue using your "
+        "services without interruption."
+        "<br /><br />"
+        "If you have auto renewal set up, kindly ignore this email."
+        "<br /><br />"
+        "{payment_sentence}"
+        "If you have already renewed, please ignore this email."
+    ).format(
+        expiry_date=escape(expiry_date.strftime("%d %B %Y")),
+        payment_sentence=Markup(payment_sentence).format(
+            payment_link=Markup(payment_link)
+        ),
+    )
+
+
+def notify_site_expiration():
+    saas_settings = frappe.get_doc("SaaS Settings")
+    if not saas_settings.notify_for_site_expiry:
+        return
+
+    notification_days = parse_site_expiry_notification_days(
+        saas_settings.site_expiry_notification_days
+    )
+    if not notification_days:
+        return
+
+    today = frappe.utils.getdate()
+    sites = frappe.get_all(
+        "SaaS Sites",
+        fields=["name", "site_name", "linked_email"],
+        filters={"status": "Active"},
+    )
+
+    failed_to_notify = []
+    for site in sites:
+        try:
+            site_config = frappe.get_site_config(site_path=site.site_name)
+            expiry_date = get_config_date(site_config, "site_expiry_date")
+            if not expiry_date:
+                continue
+
+            days_until_expiry = (expiry_date - today).days
+            if days_until_expiry not in notification_days:
+                continue
+
+            recipient = site.linked_email or site_config.get("customer_email")
+            if not recipient:
+                continue
+
+            site_doc = frappe.get_doc("SaaS Sites", site.name)
+            content = get_site_expiry_reminder_content(
+                expiry_date, get_payment_page_url(site_doc)
+            )
+            send_account_status_email(
+                recipient,
+                content,
+                subject="OneHash Account Expiration Reminder",
+            )
+        except Exception:
+            failed_to_notify.append(
+                {"site": site.site_name, "error": traceback.format_exc()}
+            )
+
+    if failed_to_notify:
+        frappe.log_error("Failed to notify site expiration", failed_to_notify)
 
 
 class SaaSSettings(Document):

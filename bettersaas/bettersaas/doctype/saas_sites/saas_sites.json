@@ -37,6 +37,7 @@
   "plan_name",
   "subscription_id",
   "customer_id",
+  "site_expiry_date",
   "section_break_ejpf",
   "invoices",
   "whitelisted_ips_tab",
@@ -242,6 +243,12 @@
    "fieldtype": "Date",
    "is_virtual": 1,
    "label": "Invoice Due Date"
+  },
+  {
+   "fieldname": "site_expiry_date",
+   "fieldtype": "Date",
+   "is_virtual": 1,
+   "label": "Site Expiry Date"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -251,7 +258,7 @@
    "link_fieldname": "linked_to_site"
   }
  ],
- "modified": "2026-03-13 12:44:15.079730",
+ "modified": "2026-06-12 11:14:58.094011",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Sites",
