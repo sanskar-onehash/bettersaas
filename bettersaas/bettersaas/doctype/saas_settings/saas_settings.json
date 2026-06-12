@@ -21,6 +21,14 @@
   "alternate_days",
   "weekly",
   "monthly",
+  "site_expiration_configuration_tab",
+  "subscription_expiry_grace_days",
+  "column_break_sexx",
+  "notify_for_site_expiry",
+  "site_expiry_notification_days",
+  "site_expiry_notification_bcc",
+  "notify_uncollectible_invoice",
+  "uncollectible_invoice_notification_bcc",
   "site_delete_configuration_tab",
   "site_delete_conf_enabled",
   "inactive_for_days",
@@ -170,12 +178,62 @@
    "fieldname": "daily",
    "fieldtype": "Data",
    "label": "Daily"
+  },
+  {
+   "fieldname": "site_expiration_configuration_tab",
+   "fieldtype": "Tab Break",
+   "label": "Site Expiration Configuration"
+  },
+  {
+   "default": "5",
+   "fieldname": "subscription_expiry_grace_days",
+   "fieldtype": "Int",
+   "label": "Subscription Expiry Grace Days"
+  },
+  {
+   "fieldname": "column_break_sexx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "7,1",
+   "depends_on": "notify_for_site_expiry",
+   "description": "Comma-separated number of days before site expiry to send reminders",
+   "fieldname": "site_expiry_notification_days",
+   "fieldtype": "Data",
+   "label": "Site Expiry Notification Days",
+   "mandatory_depends_on": "notify_for_site_expiry"
+  },
+  {
+   "depends_on": "notify_for_site_expiry",
+   "description": "Comma-separated email addresses to BCC on site expiry reminder emails",
+   "fieldname": "site_expiry_notification_bcc",
+   "fieldtype": "Small Text",
+   "label": "Site Expiry Notification BCC"
+  },
+  {
+   "default": "0",
+   "fieldname": "notify_for_site_expiry",
+   "fieldtype": "Check",
+   "label": "Notify for Site Expiry"
+  },
+  {
+   "default": "0",
+   "fieldname": "notify_uncollectible_invoice",
+   "fieldtype": "Check",
+   "label": "Notify Uncollectible Invoice"
+  },
+  {
+   "depends_on": "notify_uncollectible_invoice",
+   "description": "Comma-separated email addresses to BCC on uncollectible invoice notification emails",
+   "fieldname": "uncollectible_invoice_notification_bcc",
+   "fieldtype": "Small Text",
+   "label": "Uncollectible Invoice Notification BCC"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-02-25 13:02:04.393668",
+ "modified": "2026-06-12 12:30:01.464576",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Settings",

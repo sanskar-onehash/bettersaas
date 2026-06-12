@@ -9,6 +9,7 @@ import requests
 import ipaddress
 import re
 import subprocess as sp
+from markupsafe import Markup, escape
 from bettersaas.contexts.user_context import get_user_context
 import bettersaas.fail2ban as f2b
 from bettersaas.bettersaas import utils
@@ -553,6 +554,32 @@ def update_invoice_due(site_name, due_date):
     execute_commands(commands)
 
 
+def get_subscription_expiry_grace_days():
+    grace_days = frappe.get_doc("SaaS Settings").subscription_expiry_grace_days
+    if grace_days is None:
+        return 5
+
+    return int(grace_days)
+
+
+def get_site_expiry_date(base_date):
+    if not base_date or base_date == "None":
+        return None
+
+    return frappe_utils.add_days(
+        frappe_utils.getdate(base_date), get_subscription_expiry_grace_days()
+    )
+
+
+def update_site_expiry_date(site_name, site_expiry_date):
+    commands = [
+        "bench --site {} set-config site_expiry_date {}".format(
+            site_name, site_expiry_date
+        )
+    ]
+    execute_commands(commands)
+
+
 class SaaSSites(Document):
     def __init__(self, *args, **kwargs):
         super(SaaSSites, self).__init__(*args, **kwargs)
@@ -593,6 +620,10 @@ class SaaSSites(Document):
     @property
     def invoice_due_date(self):
         return frappe.get_site_config(site_path=self.site_name).get("invoice_due_date")
+
+    @property
+    def site_expiry_date(self):
+        return frappe.get_site_config(site_path=self.site_name).get("site_expiry_date")
 
     @property
     def customer_id(self):
@@ -666,10 +697,21 @@ class SaaSSites(Document):
                     due_date = invoice.due_date
 
         update_invoice_due(self.site_name, due_date)
+        update_site_expiry_date(
+            self.site_name, get_site_expiry_date(due_date or self.subscription_ends_on)
+        )
 
     def on_update(self):
         self.update_ips()
         self.update_invoice_due()
+        try:
+            self.notify_invoice_update()
+        except Exception:
+            frappe.log_error(
+                "Failed to notify customer about invoice update",
+                frappe.get_traceback(),
+            )
+            frappe.msgprint("Failed to notify customer about invoice update.")
 
     def on_trash(self):
         if self.whitelist_ips:
@@ -691,3 +733,58 @@ class SaaSSites(Document):
                 frappe.throw(f"Invalid IP address: {ip}")
 
         return valid_ips
+
+    def notify_invoice_update(self):
+        if len(self.invoices):
+            invoice_doc = self.invoices[0]
+            saas_settings = frappe.get_doc("SaaS Settings")
+
+            if (
+                invoice_doc.status == "uncollectible"
+                and not invoice_doc.uncollectible_notified
+                and saas_settings.notify_uncollectible_invoice
+            ):
+                payment_page_url = invoice_doc.payment_page_url
+                payment_link = (
+                    '<a href="{0}" style="color: #007ee5;">{0}</a>'.format(
+                        escape(payment_page_url)
+                    )
+                    if payment_page_url
+                    else ""
+                )
+                payment_sentence = (
+                    "Please complete your payment using this link:"
+                    "<br />"
+                    "{payment_link}"
+                    "<br /><br />"
+                    if payment_link
+                    else ""
+                )
+                content = Markup(
+                    "We were unable to collect payment for your OneHash subscription. "
+                    "Please review your payment method and complete the pending payment "
+                    "to avoid any interruption to your service."
+                    "<br /><br />"
+                    "{payment_sentence}"
+                    "If you have already taken action, please ignore this email."
+                ).format(
+                    payment_sentence=Markup(payment_sentence).format(
+                        payment_link=Markup(payment_link)
+                    )
+                )
+
+                utils.send_account_status_email(
+                    self.linked_email,
+                    content,
+                    subject="Payment Failed for Your OneHash Subscription",
+                    bcc=utils.parse_email_list(
+                        saas_settings.uncollectible_invoice_notification_bcc
+                    ),
+                )
+                frappe.db.set_value(
+                    invoice_doc.doctype,
+                    invoice_doc.name,
+                    "uncollectible_notified",
+                    1,
+                    update_modified=False,
+                )

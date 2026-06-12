@@ -99,3 +99,25 @@ def validate_phone_number(phone_number: str, fieldname: str = "Phone"):
     if not phone_number.startswith("+"):
         phone_number = "+" + phone_number
     utils.validate_phone_number_with_country_code(phone_number, fieldname)
+
+
+def parse_email_list(emails):
+    return [
+        email.strip()
+        for email in (emails or "").replace("\n", ",").split(",")
+        if email.strip()
+    ]
+
+
+def send_account_status_email(email, content, subject="Account Status", bcc=None):
+    template = "account_status_email"
+    args = {"content": content}
+    frappe.sendmail(
+        recipients=email,
+        bcc=bcc,
+        subject=subject,
+        template=template,
+        args=args,
+        delayed=False,
+    )
+    return True

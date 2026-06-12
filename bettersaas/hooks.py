@@ -146,6 +146,9 @@ scheduler_events = {
         "0 0 * * *": [
             "bettersaas.bettersaas.doctype.saas_settings.saas_settings.delete_archived_sites",
             "bettersaas.bettersaas.doctype.saas_settings.saas_settings.delete_free_sites",
+        ],
+        "0 10 * * *": [
+            "bettersaas.bettersaas.doctype.saas_settings.saas_settings.notify_site_expiration",
         ]
     }
 }
