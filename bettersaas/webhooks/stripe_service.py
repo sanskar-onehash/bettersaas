@@ -1,7 +1,10 @@
 import frappe
 import stripe
 from datetime import datetime
-from bettersaas.bettersaas.doctype.saas_sites.saas_sites import execute_commands
+from bettersaas.bettersaas.doctype.saas_sites.saas_sites import (
+    execute_commands,
+    get_site_expiry_date,
+)
 
 
 def get_site_name_from_customer_id(customer_id):
@@ -14,6 +17,14 @@ def get_date_from_timestamp(timestamp):
     if not timestamp:
         return None
     return datetime.fromtimestamp(timestamp).date()
+
+
+def get_current_invoice_due_date(site_name):
+    invoice_due_date = frappe.get_site_config(site_path=site_name).get(
+        "invoice_due_date"
+    )
+    if invoice_due_date and invoice_due_date != "None":
+        return invoice_due_date
 
 
 def process_subscription_updated(data, plan_name):
@@ -65,6 +76,14 @@ def process_subscription_updated(data, plan_name):
     commands.append(
         "bench --site {} set-config subscription_ends_on {}".format(
             site_name, subscription_ends_on
+        )
+    )
+    commands.append(
+        "bench --site {} set-config site_expiry_date {}".format(
+            site_name,
+            get_site_expiry_date(
+                get_current_invoice_due_date(site_name) or subscription_ends_on
+            ),
         )
     )
     execute_commands(commands)
@@ -119,6 +138,14 @@ def process_subscription_deleted(data, plan_name):
     commands.append(
         "bench --site {} set-config subscription_ends_on {}".format(
             site_name, subscription_ends_on
+        )
+    )
+    commands.append(
+        "bench --site {} set-config site_expiry_date {}".format(
+            site_name,
+            get_site_expiry_date(
+                get_current_invoice_due_date(site_name) or subscription_ends_on
+            ),
         )
     )
     execute_commands(commands)

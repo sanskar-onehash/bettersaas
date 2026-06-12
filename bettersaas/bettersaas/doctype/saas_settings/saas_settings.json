@@ -21,6 +21,8 @@
   "alternate_days",
   "weekly",
   "monthly",
+  "site_expiration_configuration_tab",
+  "subscription_expiry_grace_days",
   "site_delete_configuration_tab",
   "site_delete_conf_enabled",
   "inactive_for_days",
@@ -170,12 +172,23 @@
    "fieldname": "daily",
    "fieldtype": "Data",
    "label": "Daily"
-  }
+  },
+  {
+   "fieldname": "site_expiration_configuration_tab",
+   "fieldtype": "Tab Break",
+   "label": "Site Expiration Configuration"
+  },
+  {
+   "default": "5",
+   "fieldname": "subscription_expiry_grace_days",
+   "fieldtype": "Int",
+   "label": "Subscription Expiry Grace Days"
+  },
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-02-25 13:02:04.393668",
+ "modified": "2026-06-12 11:12:05.711139",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Settings",

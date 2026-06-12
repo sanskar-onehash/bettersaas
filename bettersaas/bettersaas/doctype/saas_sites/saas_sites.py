@@ -553,6 +553,32 @@ def update_invoice_due(site_name, due_date):
     execute_commands(commands)
 
 
+def get_subscription_expiry_grace_days():
+    grace_days = frappe.get_doc("SaaS Settings").subscription_expiry_grace_days
+    if grace_days is None:
+        return 5
+
+    return int(grace_days)
+
+
+def get_site_expiry_date(base_date):
+    if not base_date or base_date == "None":
+        return None
+
+    return frappe_utils.add_days(
+        frappe_utils.getdate(base_date), get_subscription_expiry_grace_days()
+    )
+
+
+def update_site_expiry_date(site_name, site_expiry_date):
+    commands = [
+        "bench --site {} set-config site_expiry_date {}".format(
+            site_name, site_expiry_date
+        )
+    ]
+    execute_commands(commands)
+
+
 class SaaSSites(Document):
     def __init__(self, *args, **kwargs):
         super(SaaSSites, self).__init__(*args, **kwargs)
@@ -593,6 +619,10 @@ class SaaSSites(Document):
     @property
     def invoice_due_date(self):
         return frappe.get_site_config(site_path=self.site_name).get("invoice_due_date")
+
+    @property
+    def site_expiry_date(self):
+        return frappe.get_site_config(site_path=self.site_name).get("site_expiry_date")
 
     @property
     def customer_id(self):
@@ -666,6 +696,9 @@ class SaaSSites(Document):
                     due_date = invoice.due_date
 
         update_invoice_due(self.site_name, due_date)
+        update_site_expiry_date(
+            self.site_name, get_site_expiry_date(due_date or self.subscription_ends_on)
+        )
 
     def on_update(self):
         self.update_ips()
