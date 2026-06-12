@@ -761,7 +761,8 @@ class SaaSSites(Document):
                     else ""
                 )
                 content = Markup(
-                    "We were unable to collect payment for your OneHash subscription. "
+                    "We were unable to collect payment for your OneHash subscription "
+                    "for {site_name}. "
                     "Please review your payment method and complete the pending payment "
                     "to avoid any interruption to your service."
                     "<br /><br />"
@@ -770,7 +771,8 @@ class SaaSSites(Document):
                 ).format(
                     payment_sentence=Markup(payment_sentence).format(
                         payment_link=Markup(payment_link)
-                    )
+                    ),
+                    site_name=escape(self.site_name),
                 )
 
                 utils.send_account_status_email(
