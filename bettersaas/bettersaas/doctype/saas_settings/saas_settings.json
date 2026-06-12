@@ -26,7 +26,9 @@
   "column_break_sexx",
   "notify_for_site_expiry",
   "site_expiry_notification_days",
+  "site_expiry_notification_bcc",
   "notify_uncollectible_invoice",
+  "uncollectible_invoice_notification_bcc",
   "site_delete_configuration_tab",
   "site_delete_conf_enabled",
   "inactive_for_days",
@@ -202,6 +204,13 @@
    "mandatory_depends_on": "notify_for_site_expiry"
   },
   {
+   "depends_on": "notify_for_site_expiry",
+   "description": "Comma-separated email addresses to BCC on site expiry reminder emails",
+   "fieldname": "site_expiry_notification_bcc",
+   "fieldtype": "Small Text",
+   "label": "Site Expiry Notification BCC"
+  },
+  {
    "default": "0",
    "fieldname": "notify_for_site_expiry",
    "fieldtype": "Check",
@@ -212,6 +221,13 @@
    "fieldname": "notify_uncollectible_invoice",
    "fieldtype": "Check",
    "label": "Notify Uncollectible Invoice"
+  },
+  {
+   "depends_on": "notify_uncollectible_invoice",
+   "description": "Comma-separated email addresses to BCC on uncollectible invoice notification emails",
+   "fieldname": "uncollectible_invoice_notification_bcc",
+   "fieldtype": "Small Text",
+   "label": "Uncollectible Invoice Notification BCC"
   }
  ],
  "index_web_pages_for_search": 1,

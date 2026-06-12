@@ -10,7 +10,7 @@ from frappe import _
 from frappe.utils.password import decrypt
 from frappe.model.document import Document
 from markupsafe import Markup, escape
-from bettersaas.bettersaas.utils import send_account_status_email
+from bettersaas.bettersaas.utils import parse_email_list, send_account_status_email
 
 
 def get_days_since_creation(folder_path):
@@ -297,6 +297,7 @@ def notify_site_expiration():
                 recipient,
                 content,
                 subject="OneHash Account Expiration Reminder",
+                bcc=parse_email_list(saas_settings.site_expiry_notification_bcc),
             )
         except Exception:
             failed_to_notify.append(
