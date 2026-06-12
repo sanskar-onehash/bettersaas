@@ -223,13 +223,17 @@ def get_payment_page_url(site):
 
 def get_site_expiry_reminder_content(expiry_date, payment_page_url=None):
     payment_sentence = (
-        "Please complete your payment using this link: {payment_link}."
+        "Please complete your payment using this link:"
+        "<br />"
+        "{payment_link}"
         "<br /><br />"
         if payment_page_url
         else ""
     )
     payment_link = (
-        '<a href="{0}" style="color: #000;">{0}</a>'.format(escape(payment_page_url))
+        '<a href="{0}" style="color: #007ee5;">{0}</a>'.format(
+            escape(payment_page_url)
+        )
         if payment_page_url
         else ""
     )
@@ -240,10 +244,9 @@ def get_site_expiry_reminder_content(expiry_date, payment_page_url=None):
         "Please renew your subscription before this date to continue using your "
         "services without interruption."
         "<br /><br />"
-        "If you have auto renewal set up, kindly ignore this email."
-        "<br /><br />"
         "{payment_sentence}"
-        "If you have already renewed, please ignore this email."
+        "If you have already renewed or have auto renewal set up, please ignore "
+        "this email."
     ).format(
         expiry_date=escape(expiry_date.strftime("%d %B %Y")),
         payment_sentence=Markup(payment_sentence).format(

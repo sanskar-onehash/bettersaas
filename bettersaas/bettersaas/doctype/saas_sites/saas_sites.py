@@ -747,14 +747,16 @@ class SaaSSites(Document):
             ):
                 payment_page_url = invoice_doc.payment_page_url
                 payment_link = (
-                    '<a href="{0}" style="color: #000;">{0}</a>'.format(
+                    '<a href="{0}" style="color: #007ee5;">{0}</a>'.format(
                         escape(payment_page_url)
                     )
                     if payment_page_url
                     else ""
                 )
                 payment_sentence = (
-                    "Please complete your payment using this link: {payment_link}."
+                    "Please complete your payment using this link:"
+                    "<br />"
+                    "{payment_link}"
                     "<br /><br />"
                     if payment_link
                     else ""
@@ -772,7 +774,11 @@ class SaaSSites(Document):
                     )
                 )
 
-                utils.send_account_status_email(self.linked_email, content, subject="")
+                utils.send_account_status_email(
+                    self.linked_email,
+                    content,
+                    subject="Payment Failed for Your OneHash Subscription",
+                )
                 frappe.db.set_value(
                     invoice_doc.doctype,
                     invoice_doc.name,
