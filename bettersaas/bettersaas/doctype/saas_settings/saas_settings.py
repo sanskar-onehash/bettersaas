@@ -75,7 +75,9 @@ def delete_free_sites():
     if not saas_settings.site_delete_conf_enabled:
         return
     sites = frappe.get_list(
-        "SaaS Sites", fields=["site_name"], filters={"status": "Active"}
+        "SaaS Sites",
+        fields=["site_name"],
+        filters={"status": "Active", "is_internal_site": 0},
     )
     to_be_deleted = []
     for site in sites:
@@ -221,7 +223,7 @@ def get_payment_page_url(site):
         return invoices[0].payment_page_url
 
 
-def get_site_expiry_reminder_content(expiry_date, payment_page_url=None):
+def get_site_expiry_reminder_content(site_name, expiry_date, payment_page_url=None):
     payment_sentence = (
         "Please complete your payment using this link:"
         "<br />"
@@ -239,7 +241,8 @@ def get_site_expiry_reminder_content(expiry_date, payment_page_url=None):
     )
 
     return Markup(
-        "This is a reminder that your OneHash account will expire on {expiry_date}."
+        "This is a reminder that your OneHash account for {site_name} will expire "
+        "on {expiry_date}."
         "<br /><br />"
         "Please renew your subscription before this date to continue using your "
         "services without interruption."
@@ -248,6 +251,7 @@ def get_site_expiry_reminder_content(expiry_date, payment_page_url=None):
         "If you have already renewed or have auto renewal set up, please ignore "
         "this email."
     ).format(
+        site_name=escape(site_name),
         expiry_date=escape(expiry_date.strftime("%d %B %Y")),
         payment_sentence=Markup(payment_sentence).format(
             payment_link=Markup(payment_link)
@@ -270,7 +274,7 @@ def notify_site_expiration():
     sites = frappe.get_all(
         "SaaS Sites",
         fields=["name", "site_name", "linked_email"],
-        filters={"status": "Active"},
+        filters={"status": "Active", "is_internal_site": 0},
     )
 
     failed_to_notify = []
@@ -291,7 +295,7 @@ def notify_site_expiration():
 
             site_doc = frappe.get_doc("SaaS Sites", site.name)
             content = get_site_expiry_reminder_content(
-                expiry_date, get_payment_page_url(site_doc)
+                site.site_name, expiry_date, get_payment_page_url(site_doc)
             )
             send_account_status_email(
                 recipient,

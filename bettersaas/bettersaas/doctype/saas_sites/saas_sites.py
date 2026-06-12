@@ -580,6 +580,15 @@ def update_site_expiry_date(site_name, site_expiry_date):
     execute_commands(commands)
 
 
+def update_skip_subscription_expiry(site_name, skip_subscription_expiry):
+    commands = [
+        "bench --site {} set-config skip_subscription_expiry {}".format(
+            site_name, 1 if skip_subscription_expiry else 0
+        )
+    ]
+    execute_commands(commands)
+
+
 class SaaSSites(Document):
     def __init__(self, *args, **kwargs):
         super(SaaSSites, self).__init__(*args, **kwargs)
@@ -704,6 +713,7 @@ class SaaSSites(Document):
     def on_update(self):
         self.update_ips()
         self.update_invoice_due()
+        update_skip_subscription_expiry(self.site_name, self.is_internal_site)
         try:
             self.notify_invoice_update()
         except Exception:
@@ -735,6 +745,9 @@ class SaaSSites(Document):
         return valid_ips
 
     def notify_invoice_update(self):
+        if self.is_internal_site:
+            return
+
         if len(self.invoices):
             invoice_doc = self.invoices[0]
             saas_settings = frappe.get_doc("SaaS Settings")
@@ -761,7 +774,8 @@ class SaaSSites(Document):
                     else ""
                 )
                 content = Markup(
-                    "We were unable to collect payment for your OneHash subscription. "
+                    "We were unable to collect payment for your OneHash subscription "
+                    "for {site_name}. "
                     "Please review your payment method and complete the pending payment "
                     "to avoid any interruption to your service."
                     "<br /><br />"
@@ -770,7 +784,8 @@ class SaaSSites(Document):
                 ).format(
                     payment_sentence=Markup(payment_sentence).format(
                         payment_link=Markup(payment_link)
-                    )
+                    ),
+                    site_name=escape(self.site_name),
                 )
 
                 utils.send_account_status_email(
