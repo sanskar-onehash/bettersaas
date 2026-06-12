@@ -241,7 +241,7 @@ def get_site_expiry_reminder_content(site_name, expiry_date, payment_page_url=No
     )
 
     return Markup(
-        "This is a reminder that your OneHash account for {site_name} will expire "
+        "This is a reminder that your OneHash account {site_name} will expire "
         "on {expiry_date}."
         "<br /><br />"
         "Please renew your subscription before this date to continue using your "

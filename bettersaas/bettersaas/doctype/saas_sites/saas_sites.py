@@ -774,8 +774,7 @@ class SaaSSites(Document):
                     else ""
                 )
                 content = Markup(
-                    "We were unable to collect payment for your OneHash subscription "
-                    "for {site_name}. "
+                    "We were unable to collect payment for your OneHash subscription on {site_name}. "
                     "Please review your payment method and complete the pending payment "
                     "to avoid any interruption to your service."
                     "<br /><br />"
