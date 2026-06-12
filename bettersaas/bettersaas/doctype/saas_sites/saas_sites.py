@@ -737,13 +737,12 @@ class SaaSSites(Document):
     def notify_invoice_update(self):
         if len(self.invoices):
             invoice_doc = self.invoices[0]
+            saas_settings = frappe.get_doc("SaaS Settings")
 
             if (
                 invoice_doc.status == "uncollectible"
                 and not invoice_doc.uncollectible_notified
-                and frappe.db.get_single_value(
-                    "SaaS Settings", "notify_uncollectible_invoice"
-                )
+                and saas_settings.notify_uncollectible_invoice
             ):
                 payment_page_url = invoice_doc.payment_page_url
                 payment_link = (
@@ -778,6 +777,9 @@ class SaaSSites(Document):
                     self.linked_email,
                     content,
                     subject="Payment Failed for Your OneHash Subscription",
+                    bcc=utils.parse_email_list(
+                        saas_settings.uncollectible_invoice_notification_bcc
+                    ),
                 )
                 frappe.db.set_value(
                     invoice_doc.doctype,
