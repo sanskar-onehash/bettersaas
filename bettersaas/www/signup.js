@@ -124,14 +124,14 @@ window.Vue.createApp({
     if (countrySelect) {
       try {
         const response = await fetch(
-          "https://restcountries.com/v3.1/all?fields=name,cca2",
+          "https://countries.dev/countries?fields=name,alpha2Code",
         );
         const countries = await response.json();
 
         const countryList = countries
           .map((country) => ({
-            name: country.name.common,
-            code: country.cca2,
+            name: country.name,
+            code: country.alpha2Code,
           }))
           .sort((a, b) => a.name.localeCompare(b.name));
 
