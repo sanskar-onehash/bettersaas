@@ -187,7 +187,7 @@ def mark_site_as_used(site):
 
 
 def execute_commands(commands):
-    command = " ; ".join(commands)
+    command = " && ".join(commands)
     process = sp.Popen(command, shell=True)
     process.wait()
     os.system(
@@ -338,7 +338,7 @@ def setup_site(*args, **kwargs):
     )
     sites_path = os.path.join(frappe_utils.get_bench_path(), "sites")
     commands.append(
-        "cd {} & mv {}.{} {}".format(
+        "cd {} && mv {}.{} {}".format(
             sites_path, target_site.subdomain, frappe.conf.domain, new_site
         )
     )
