@@ -50,7 +50,10 @@ app_include_js = [
 # 	"Role": "home_page"
 # }
 
-after_migrate = ['bettersaas.api.bettersaas_patch']
+after_migrate = [
+    "bettersaas.api.bettersaas_patch",
+    "bettersaas.backups.local.disable_legacy_backup_jobs",
+]
 
 # Generators
 # ----------
@@ -123,22 +126,9 @@ doc_events = {
 
 
 scheduler_events = {
-    "monthly": [
-        "bettersaas.bettersaas.page.onehash_backups.onehash_backups.schedule_files_backup_monthly",
-    ],
-    "weekly": [
-        "bettersaas.bettersaas.page.onehash_backups.onehash_backups.schedule_files_backup_weekly",
-    ],
-    # "hourly": [
-    # ],
-    # "daily_long": [
-    # ],
     "cron":{
-        "0 */6 * * *": [
-            "bettersaas.bettersaas.page.onehash_backups.onehash_backups.schedule_files_backup_daily",
-        ],
-        "0 0 */2 * *" : [
-            "bettersaas.bettersaas.page.onehash_backups.onehash_backups.schedule_files_backup_alternate_days",
+        "30 1 * * *": [
+            "bettersaas.backups.local.schedule_nightly_database_backups",
         ],
         "0 */4 * * *": [
             "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refresh_stock_sites",
@@ -162,7 +152,6 @@ scheduler_events = {
 # ------------------------------
 #
 override_whitelisted_methods = {
-    "frappe.desk.page.backups.backups.schedule_files_backup": "bettersaas.bettersaas.overrides.globals.schedule_files_backup",
     "frappe.core.doctype.communication.email.mark_email_as_seen": "bettersaas.bettersaas.overrides.email.mark_email_as_seen",
     "frappe.core.doctype.communication.email.make": "bettersaas.bettersaas.overrides.email.make"
 }

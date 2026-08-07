@@ -4,7 +4,6 @@
 import frappe
 import json
 import os
-import boto3
 import requests
 import ipaddress
 import re
@@ -497,23 +496,8 @@ def execute_command_async(command):
 
 
 @frappe.whitelist()
-def delete_from_s3(key):
-    from botocore.exceptions import ClientError
-
-    S3_CLIENT = boto3.client(
-        "s3",
-        aws_access_key_id=frappe.conf.aws_access_key_id,
-        aws_secret_access_key=frappe.conf.aws_secret_access_key,
-        region_name=frappe.conf.aws_bucket_region_name,
-    )
-    try:
-        S3_CLIENT.delete_object(Bucket=frappe.conf.aws_bucket_name, Key=key)
-    except ClientError:
-        frappe.throw(frappe._("Access denied: Could not delete file"))
-
-
-@frappe.whitelist(allow_guest=True)
 def delete_old_backups(site_name, limit, frequency):
+    frappe.only_for("System Manager")
     records = frappe.get_list(
         "SaaS Sites Backup",
         filters={"site": site_name, "frequency": frequency},
@@ -524,7 +508,6 @@ def delete_old_backups(site_name, limit, frequency):
     for i in range(int(limit), len(records)):
         frappe.delete_doc("SaaS Sites Backup", records[i].name)
         frappe.db.commit()
-        delete_from_s3(records[i].path)
     return "Deletion Done"
 
 
