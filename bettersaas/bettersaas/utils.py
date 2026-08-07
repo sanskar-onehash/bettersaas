@@ -1,19 +1,19 @@
 import subprocess
-import requests
+import os
 import frappe
 from frappe import utils
 
 
 @frappe.whitelist()
 def get_backup_size_of_site():
-    url = (
-        "http://"
-        + frappe.conf.admin_url
-        + "/api/method/bettersaas.bettersaas.doctype.saas_sites.saas_sites.get_site_backup_size?site_name="
-        + frappe.local.site
+    backup_path = frappe.get_site_path("private", "backups")
+    if not os.path.isdir(backup_path):
+        return 0
+    return sum(
+        os.path.getsize(os.path.join(backup_path, filename))
+        for filename in os.listdir(backup_path)
+        if os.path.isfile(os.path.join(backup_path, filename))
     )
-    resp = requests.get(url)
-    return resp.json()["message"]
 
 
 @frappe.whitelist()
