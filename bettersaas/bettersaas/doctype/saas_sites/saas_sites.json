@@ -204,6 +204,7 @@
   },
   {
    "default": "0",
+   "description": "When enabled, users can be added beyond the free or purchased limits",
    "fieldname": "user_contacted",
    "fieldtype": "Check",
    "label": "Contacted for Inc User Limit?"
